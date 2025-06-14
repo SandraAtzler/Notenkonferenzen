@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notenkonferenzen</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      position: absolute;
+      top: 90px;
+      left: 540px;
+      width: 150px;
+    }
+
+    .container {
+      margin-left: 540px;
+    }
+
+    .row {
+      margin-bottom: 20px;
+    }
+
+    .row-label {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .class-button {
+      padding: 10px 16px;
+      background-color: darkred;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: default;
+      user-select: none;
+    }
+
+    .class-button.active {
+      background-color: #cc4c4c;
+    }
+
+    #status {
+      margin-top: 40px;
+      font-size: 1.2em;
+      text-align: center;
+    }
+
+    #timer {
+      font-weight: bold;
+    }
+
+    .lock-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 40px;
+      opacity: 0.6;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <img class="logo" src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png" alt="Logo" />
+  <h1>Übersicht über die Notenkonferenzen</h1>
+
+  <div class="container">
+    <div class="row">
+      <div class="row-label">5. Klassen</div>
+      <div class="button-group" id="row-5">
+        <button class="class-button">5a</button>
+        <button class="class-button">5b</button>
+        <button class="class-button">5c</button>
+        <button class="class-button">5d</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="row-label">6. Klassen</div>
+      <div class="button-group" id="row-6">
+        <button class="class-button">6a</button>
+        <button class="class-button">6b</button>
+        <button class="class-button">6c</button>
+        <button class="class-button">6d</button>
+      </div>
+    </div>
+
+    <!-- Weitere Jahrgänge bis 10 hier analog hinzufügen -->
+  </div>
+
+  <div id="status">Die Konferenzen haben noch nicht begonnen.</div>
+
+  <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" class="lock-icon" alt="Schloss" id="lock" title="Zum Freischalten doppelklicken" />
+
+  <script>
+    let unlocked = false;
+    let activeButton = null;
+    let startTime = null;
+    let timerInterval = null;
+
+    const status = document.getElementById("status");
+    const lock = document.getElementById("lock");
+    const buttons = document.querySelectorAll(".class-button");
+
+    function formatTime(ms) {
+      const s = Math.floor(ms / 1000);
+      const m = Math.floor(s / 60);
+      const sec = s % 60;
+      return `${m} min ${sec} sek`;
+    }
+
+    function updateTimer() {
+      const now = Date.now();
+      const diff = now - startTime;
+      const formatted = formatTime(diff);
+      status.innerHTML = `Aktive Klasse: <strong>${activeButton.textContent}</strong> – seit <span id="timer">${formatted}</span>`;
+    }
+
+    function resetButtons() {
+      buttons.forEach((btn) => btn.classList.remove("active"));
+    }
+
+    lock.addEventListener("dblclick", () => {
+      unlocked = !unlocked;
+      lock.style.opacity = unlocked ? 1 : 0.6;
+    });
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("dblclick", () => {
+        if (!unlocked) return;
+
+        if (activeButton === btn) return; // Already active
+
+        resetButtons();
+        btn.classList.add("active");
+        activeButton = btn;
+        startTime = Date.now();
+        updateTimer();
+        clearInterval(timerInterval);
+        timerInterval = setInterval(updateTimer, 1000);
+      });
+    });
+  </script>
+</body>
+</html>
