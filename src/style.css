@@ -1,0 +1,59 @@
+
+body {
+  font-family: sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 40px;
+}
+h1 {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.logo {
+  position: absolute;
+  top: 90px;
+  left: 540px;
+  width: 150px;
+}
+.container {
+  margin-left: 540px;
+}
+.row {
+  margin-bottom: 20px;
+}
+.row-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+.class-button {
+  padding: 10px 16px;
+  background-color: darkred;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: default;
+  user-select: none;
+}
+.class-button.active {
+  background-color: #cc4c4c;
+}
+#status {
+  margin-top: 40px;
+  font-size: 1.2em;
+  text-align: center;
+}
+#timer {
+  font-weight: bold;
+}
+.lock-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  opacity: 0.6;
+  cursor: pointer;
+}
