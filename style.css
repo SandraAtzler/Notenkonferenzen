@@ -42,6 +42,9 @@ button {
   padding: 10px 15px;
   border-radius: 5px;
   cursor: pointer;
+  min-width: 60px;           /* Einheitliche Breite */
+  text-align: center;
+  box-sizing: border-box;
 }
 
 button.active {
