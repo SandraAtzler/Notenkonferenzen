@@ -55,12 +55,29 @@ button:hover {
 }
 
 .logo {
-  position: fixed;
+  position: absolute;
   left: 540px;
   top: 90px;
   height: 60px;
-  margin: 0;
   z-index: 10;
+}
+
+/* Tablet-Bildschirme */
+@media (max-width: 1024px) {
+  .logo {
+    left: 40px;
+    top: 40px;
+  }
+}
+
+/* Kleine Bildschirme (Handys) */
+@media (max-width: 600px) {
+  .logo {
+    position: static;
+    display: block;
+    margin: 0 auto 20px;
+  }
+}
 }
 
 .lock {
