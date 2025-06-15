@@ -1,59 +1,12 @@
 body {
   font-family: Arial, sans-serif;
-  padding: 20px;
-  margin: 0;
+  background-color: #fefefe;
+  margin: 20px;
 }
-
 h1 {
   text-align: center;
   margin-bottom: 40px;
 }
-
-.status {
-  text-align: center;
-  font-size: 1.2em;
-  margin-bottom: 30px;
-}
-
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.class-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.class-label {
-  font-weight: bold;
-  min-width: 120px;
-}
-
-button {
-  background-color: darkred;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  min-width: 60px;           /* Einheitliche Breite */
-  text-align: center;
-  box-sizing: border-box;
-}
-
-button.active {
-  background-color: #e74c3c;
-}
-
-button:hover {
-  opacity: 0.85;
-}
-
 .logo {
   position: absolute;
   left: 540px;
@@ -61,16 +14,12 @@ button:hover {
   height: 60px;
   z-index: 10;
 }
-
-/* Tablet-Bildschirme */
 @media (max-width: 1024px) {
   .logo {
     left: 40px;
     top: 40px;
   }
 }
-
-/* Kleine Bildschirme (Handys) */
 @media (max-width: 600px) {
   .logo {
     position: static;
@@ -78,8 +27,65 @@ button:hover {
     margin: 0 auto 20px;
   }
 }
+.status {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-align: center;
 }
-
+.container {
+  margin-left: 540px;
+  max-width: 900px;
+}
+@media (max-width: 1024px) {
+  .container {
+    margin-left: 80px;
+    max-width: 600px;
+  }
+}
+@media (max-width: 600px) {
+  .container {
+    margin-left: 0;
+    max-width: 100%;
+    padding: 0 10px;
+  }
+}
+.class-row {
+  margin-bottom: 15px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.class-label {
+  min-width: 140px;
+  font-weight: bold;
+  font-size: 18px;
+  color: #330000;
+}
+button {
+  background-color: darkred;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  min-width: 60px;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  user-select: none;
+}
+button:focus {
+  outline: 2px solid #ff9999;
+  outline-offset: 2px;
+}
+button.active {
+  background-color: #e74c3c;
+}
+button:disabled {
+  background-color: #440000;
+  cursor: not-allowed;
+}
 .lock {
   position: fixed;
   bottom: 20px;
@@ -89,25 +95,5 @@ button:hover {
   cursor: pointer;
   opacity: 1;
   transition: opacity 0.3s;
-}
-
-@media (max-width: 700px) {
-  .class-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .class-label {
-    margin-bottom: 5px;
-  }
-
-  .logo {
-    position: static;
-    display: block;
-    margin: 0 auto 20px auto;
-  }
-
-  .container {
-    margin-left: 0;
-  }
+  user-select: none;
 }
