@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Übersicht über die Notenkonferenzen</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
 </head>
 <body>
   <img src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png" class="logo" alt="Logo">
@@ -12,6 +15,7 @@
   <div class="status">Die Konferenzen haben noch nicht begonnen.</div>
 
   <div class="container">
+    <!-- Klassen 5 bis 10 mit e ergänzt -->
     <div class="class-row">
       <span class="class-label">5. Klassen</span>
       <button ondblclick="selectClass('5a')">5a</button>
@@ -61,24 +65,61 @@
     </div>
   </div>
 
-  <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" class="lock" ondblclick="unlock()" alt="Schloss">
+  <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png"
+       class="lock" ondblclick="unlock()" alt="Schloss" title="Doppelklick zum Entsperren">
 
-  // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+  <script>
+    // Firebase-Konfiguration hier einfügen:
+    const firebaseConfig = {
+      apiKey: "AIzaSyCIOeOJnqY3yHjbl6Ho14PYO6lpcOZtjfA",
+      authDomain: "notenkonferenzen.firebaseapp.com",
+      projectId: "notenkonferenzen",
+      storageBucket: "notenkonferenzen.firebasestorage.app",
+      messagingSenderId: "471386308742",
+      appId: "1:471386308742:web:73c3409b42e1db2d599107"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCIOeOJnqY3yHjbl6Ho14PYO6lpcOZtjfA",
-  authDomain: "notenkonferenzen.firebaseapp.com",
-  projectId: "notenkonferenzen",
-  storageBucket: "notenkonferenzen.firebasestorage.app",
-  messagingSenderId: "471386308742",
-  appId: "1:471386308742:web:73c3409b42e1db2d599107"
-};
+    const statusEl = document.querySelector('.status');
+    let timerInterval, unlocked = false;
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+    db.ref('konferenz').on('value', snap => {
+      const data = snap.val();
+      clearInterval(timerInterval);
+      if (data) {
+        const start = new Date(data.startzeit);
+        const klasse = data.klasse;
+        highlightActiveButton(klasse);
+        timerInterval = setInterval(() => {
+          const diff = Math.floor((Date.now() - start) / 1000);
+          const min = Math.floor(diff / 60), sec = diff % 60;
+          statusEl.textContent = 
+            `Aktuell in der Konferenz: ${klasse} (${min} Min ${sec} Sek)`;
+        }, 1000);
+      } else {
+        statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
+      }
+    });
+
+    function selectClass(className) {
+      if (!unlocked) return;
+      db.ref('konferenz').set({
+        klasse: className,
+        startzeit: new Date().toISOString()
+      });
+    }
+
+    function highlightActiveButton(cls) {
+      document.querySelectorAll('button').forEach(btn =>
+        btn.classList.toggle('active', btn.textContent === cls)
+      );
+    }
+
+    function unlock() {
+      unlocked = true;
+      document.querySelector('.lock').style.opacity = 0.3;
+    }
+  </script>
 </body>
 </html>
