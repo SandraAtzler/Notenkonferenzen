@@ -1,23 +1,118 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Übersicht über die Notenkonferenzen</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Notenkonferenzen Übersicht</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fefefe;
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .logo {
+      position: absolute;
+      left: 540px;
+      top: 90px;
+      height: 60px;
+      z-index: 10;
+    }
+    @media (max-width: 1024px) {
+      .logo {
+        left: 40px;
+        top: 40px;
+      }
+    }
+    @media (max-width: 600px) {
+      .logo {
+        position: static;
+        display: block;
+        margin: 0 auto 20px;
+      }
+    }
+    .status {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .container {
+      margin-left: 540px;
+      max-width: 900px;
+    }
+    @media (max-width: 1024px) {
+      .container {
+        margin-left: 80px;
+        max-width: 600px;
+      }
+    }
+    @media (max-width: 600px) {
+      .container {
+        margin-left: 0;
+        max-width: 100%;
+        padding: 0 10px;
+      }
+    }
+    .class-row {
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .class-label {
+      min-width: 140px;
+      font-weight: bold;
+      font-size: 18px;
+      color: #330000;
+    }
+    button {
+      background-color: #660000;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 5px;
+      cursor: pointer;
+      min-width: 60px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+      user-select: none;
+    }
+    button:focus {
+      outline: 2px solid #ff9999;
+      outline-offset: 2px;
+    }
+    button.active {
+      background-color: #990000;
+    }
+    button:disabled {
+      background-color: #440000;
+      cursor: not-allowed;
+    }
+    .lock {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      opacity: 1;
+      transition: opacity 0.3s;
+      user-select: none;
+    }
+  </style>
 </head>
 <body>
-  <img src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png" class="logo" alt="Logo">
+  <img src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png" alt="Schullogo" class="logo" />
   <h1>Übersicht über die Notenkonferenzen</h1>
   <div class="status">Die Konferenzen haben noch nicht begonnen.</div>
-
   <div class="container">
-    <!-- Klassen 5 bis 10 mit e ergänzt -->
     <div class="class-row">
-      <span class="class-label">5. Klassen</span>
+      <div class="class-label">5. Klassen</div>
       <button ondblclick="selectClass('5a')">5a</button>
       <button ondblclick="selectClass('5b')">5b</button>
       <button ondblclick="selectClass('5c')">5c</button>
@@ -25,7 +120,7 @@
       <button ondblclick="selectClass('5e')">5e</button>
     </div>
     <div class="class-row">
-      <span class="class-label">6. Klassen</span>
+      <div class="class-label">6. Klassen</div>
       <button ondblclick="selectClass('6a')">6a</button>
       <button ondblclick="selectClass('6b')">6b</button>
       <button ondblclick="selectClass('6c')">6c</button>
@@ -33,7 +128,7 @@
       <button ondblclick="selectClass('6e')">6e</button>
     </div>
     <div class="class-row">
-      <span class="class-label">7. Klassen</span>
+      <div class="class-label">7. Klassen</div>
       <button ondblclick="selectClass('7a')">7a</button>
       <button ondblclick="selectClass('7b')">7b</button>
       <button ondblclick="selectClass('7c')">7c</button>
@@ -41,7 +136,7 @@
       <button ondblclick="selectClass('7e')">7e</button>
     </div>
     <div class="class-row">
-      <span class="class-label">8. Klassen</span>
+      <div class="class-label">8. Klassen</div>
       <button ondblclick="selectClass('8a')">8a</button>
       <button ondblclick="selectClass('8b')">8b</button>
       <button ondblclick="selectClass('8c')">8c</button>
@@ -49,7 +144,7 @@
       <button ondblclick="selectClass('8e')">8e</button>
     </div>
     <div class="class-row">
-      <span class="class-label">9. Klassen</span>
+      <div class="class-label">9. Klassen</div>
       <button ondblclick="selectClass('9a')">9a</button>
       <button ondblclick="selectClass('9b')">9b</button>
       <button ondblclick="selectClass('9c')">9c</button>
@@ -57,7 +152,7 @@
       <button ondblclick="selectClass('9e')">9e</button>
     </div>
     <div class="class-row">
-      <span class="class-label">10. Klassen</span>
+      <div class="class-label">10. Klassen</div>
       <button ondblclick="selectClass('10a')">10a</button>
       <button ondblclick="selectClass('10b')">10b</button>
       <button ondblclick="selectClass('10c')">10c</button>
@@ -65,71 +160,74 @@
     </div>
   </div>
 
-  <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png"
-       class="lock" ondblclick="unlock()" alt="Schloss" title="Doppelklick zum Entsperren">
+  <img src="https://cdn-icons-png.flaticon.com/512/565/565655.png" alt="Schloss" class="lock" ondblclick="unlock()" title="Doppelklick zum Entsperren" />
 
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script>
-    // Firebase-Konfiguration hier einfügen:
+    // Firebase-Konfiguration
     const firebaseConfig = {
       apiKey: "AIzaSyCIOeOJnqY3yHjbl6Ho14PYO6lpcOZtjfA",
       authDomain: "notenkonferenzen.firebaseapp.com",
       projectId: "notenkonferenzen",
       storageBucket: "notenkonferenzen.firebasestorage.app",
       messagingSenderId: "471386308742",
-      appId: "1:471386308742:web:73c3409b42e1db2d599107"
+      appId: "1:471386308742:web:73c3409b42e1db2d599107",
+      databaseURL: "https://notenkonferenzen-default-rtdb.europe-west1.firebasedatabase.app/"
     };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
 
-  const statusEl = document.querySelector('.status');
-  let timerInterval;
-  let unlocked = false;
-  let currentClass = null;
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-  // Firebase-Listener: immer wenn sich der Stand ändert
-  db.ref('konferenz').on('value', snap => {
-    const data = snap.val();
-    clearInterval(timerInterval);
-    document.querySelectorAll('button').forEach(btn =>
-      btn.classList.remove('active')
-    );
+    const statusEl = document.querySelector('.status');
+    let timerInterval;
+    let unlocked = false;
+    let currentClass = null;
 
-    if (data && data.klasse && data.startzeit) {
-      const start = new Date(data.startzeit);
-      currentClass = data.klasse;
-
-      const activeBtn = [...document.querySelectorAll('button')].find(
-        btn => btn.textContent === currentClass
+    // Firebase Listener
+    db.ref('konferenz').on('value', snap => {
+      const data = snap.val();
+      clearInterval(timerInterval);
+      document.querySelectorAll('button').forEach(btn =>
+        btn.classList.remove('active')
       );
-      if (activeBtn) activeBtn.classList.add('active');
 
-      timerInterval = setInterval(() => {
-        const diff = Math.floor((Date.now() - start) / 1000);
-        const min = Math.floor(diff / 60), sec = diff % 60;
-        statusEl.textContent =
-          `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
-      }, 1000);
-    } else {
-      statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
-      currentClass = null;
-    }
-  });
+      if (data && data.klasse && data.startzeit) {
+        const start = new Date(data.startzeit);
+        currentClass = data.klasse;
 
-  function selectClass(className) {
-    if (!unlocked) return;
-    if (className === currentClass) return; // Keine doppelte Auswahl
-    db.ref('konferenz').set({
-      klasse: className,
-      startzeit: new Date().toISOString()
+        const activeBtn = [...document.querySelectorAll('button')].find(
+          btn => btn.textContent === currentClass
+        );
+        if (activeBtn) activeBtn.classList.add('active');
+
+        timerInterval = setInterval(() => {
+          const diff = Math.floor((Date.now() - start) / 1000);
+          const min = Math.floor(diff / 60), sec = diff % 60;
+          statusEl.textContent =
+            `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
+        }, 1000);
+      } else {
+        statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
+        currentClass = null;
+      }
     });
-    unlocked = false;
-    document.querySelector('.lock').style.opacity = 1;
-  }
 
-  function unlock() {
-    unlocked = true;
-    document.querySelector('.lock').style.opacity = 0.3;
-  }
-</script>
+    function selectClass(className) {
+      if (!unlocked) return;
+      if (className === currentClass) return;
+      db.ref('konferenz').set({
+        klasse: className,
+        startzeit: new Date().toISOString()
+      });
+      unlocked = false;
+      document.querySelector('.lock').style.opacity = 1;
+    }
+
+    function unlock() {
+      unlocked = true;
+      document.querySelector('.lock').style.opacity = 0.3;
+    }
+  </script>
 </body>
 </html>
