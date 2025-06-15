@@ -78,48 +78,58 @@
       messagingSenderId: "471386308742",
       appId: "1:471386308742:web:73c3409b42e1db2d599107"
     };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-    const statusEl = document.querySelector('.status');
-    let timerInterval, unlocked = false;
+  const statusEl = document.querySelector('.status');
+  let timerInterval;
+  let unlocked = false;
+  let currentClass = null;
 
-    db.ref('konferenz').on('value', snap => {
-      const data = snap.val();
-      clearInterval(timerInterval);
-      if (data) {
-        const start = new Date(data.startzeit);
-        const klasse = data.klasse;
-        highlightActiveButton(klasse);
-        timerInterval = setInterval(() => {
-          const diff = Math.floor((Date.now() - start) / 1000);
-          const min = Math.floor(diff / 60), sec = diff % 60;
-          statusEl.textContent = 
-            `Aktuell in der Konferenz: ${klasse} (${min} Min ${sec} Sek)`;
-        }, 1000);
-      } else {
-        statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
-      }
-    });
+  // Firebase-Listener: immer wenn sich der Stand ändert
+  db.ref('konferenz').on('value', snap => {
+    const data = snap.val();
+    clearInterval(timerInterval);
+    document.querySelectorAll('button').forEach(btn =>
+      btn.classList.remove('active')
+    );
 
-    function selectClass(className) {
-      if (!unlocked) return;
-      db.ref('konferenz').set({
-        klasse: className,
-        startzeit: new Date().toISOString()
-      });
-    }
+    if (data && data.klasse && data.startzeit) {
+      const start = new Date(data.startzeit);
+      currentClass = data.klasse;
 
-    function highlightActiveButton(cls) {
-      document.querySelectorAll('button').forEach(btn =>
-        btn.classList.toggle('active', btn.textContent === cls)
+      const activeBtn = [...document.querySelectorAll('button')].find(
+        btn => btn.textContent === currentClass
       );
-    }
+      if (activeBtn) activeBtn.classList.add('active');
 
-    function unlock() {
-      unlocked = true;
-      document.querySelector('.lock').style.opacity = 0.3;
+      timerInterval = setInterval(() => {
+        const diff = Math.floor((Date.now() - start) / 1000);
+        const min = Math.floor(diff / 60), sec = diff % 60;
+        statusEl.textContent =
+          `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
+      }, 1000);
+    } else {
+      statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
+      currentClass = null;
     }
-  </script>
+  });
+
+  function selectClass(className) {
+    if (!unlocked) return;
+    if (className === currentClass) return; // Keine doppelte Auswahl
+    db.ref('konferenz').set({
+      klasse: className,
+      startzeit: new Date().toISOString()
+    });
+    unlocked = false;
+    document.querySelector('.lock').style.opacity = 1;
+  }
+
+  function unlock() {
+    unlocked = true;
+    document.querySelector('.lock').style.opacity = 0.3;
+  }
+</script>
 </body>
 </html>
