@@ -63,36 +63,22 @@
 
   <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" class="lock" ondblclick="unlock()" alt="Schloss">
 
-  <script>
-    let selectedClass = null;
-    let timerInterval = null;
-    let unlocked = false;
+  // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-    function selectClass(className) {
-      if (!unlocked) return;
-      selectedClass = className;
-      document.querySelector('.status').textContent = 'Aktuell in der Konferenz: ' + className;
-      document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      startTimer();
-    }
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCIOeOJnqY3yHjbl6Ho14PYO6lpcOZtjfA",
+  authDomain: "notenkonferenzen.firebaseapp.com",
+  projectId: "notenkonferenzen",
+  storageBucket: "notenkonferenzen.firebasestorage.app",
+  messagingSenderId: "471386308742",
+  appId: "1:471386308742:web:73c3409b42e1db2d599107"
+};
 
-    function startTimer() {
-      const startTime = Date.now();
-      clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - startTime) / 1000);
-        const minutes = Math.floor(elapsed / 60);
-        const seconds = elapsed % 60;
-        document.querySelector('.status').textContent =
-          'Aktuell in der Konferenz: ' + selectedClass + ' (' + minutes + ' Min ' + seconds + ' Sek)';
-      }, 1000);
-    }
-
-    function unlock() {
-      unlocked = true;
-      document.querySelector('.lock').style.opacity = 0.3;
-    }
-  </script>
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 </body>
 </html>
