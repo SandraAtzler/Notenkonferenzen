@@ -9,31 +9,37 @@
       font-family: Arial, sans-serif;
       background-color: #fefefe;
       margin: 20px;
+      /* Neu: Flexbox für vertikale Zentrierung aller Haupt-Elemente */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     h1 {
       text-align: center;
       margin-bottom: 40px;
       user-select: none;
       cursor: default;
+      width: 100%;
+      max-width: 900px;
     }
     .logo {
-      position: absolute;
-      left: 540px;
-      top: 90px;
+      /* Entfernt absolute Position, stattdessen zentriert */
       height: 60px;
-      z-index: 10;
+      margin-bottom: 40px;
+      user-select: none;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      /* z-index nicht mehr nötig */
     }
     @media (max-width: 1024px) {
       .logo {
-        left: 40px;
-        top: 40px;
+        margin-bottom: 30px;
       }
     }
     @media (max-width: 600px) {
       .logo {
-        position: static;
-        display: block;
-        margin: 0 auto 20px;
+        margin-bottom: 20px;
       }
     }
     .status {
@@ -42,20 +48,24 @@
       margin-bottom: 30px;
       text-align: center;
       user-select: none;
+      width: 100%;
+      max-width: 900px;
     }
     .container {
-      margin-left: 540px;
+      /* Entfernt margin-left, stattdessen zentriert und max-width */
       max-width: 900px;
+      width: 100%;
+      padding: 0 10px;
+      box-sizing: border-box;
     }
     @media (max-width: 1024px) {
       .container {
-        margin-left: 80px;
         max-width: 600px;
+        padding: 0 10px;
       }
     }
     @media (max-width: 600px) {
       .container {
-        margin-left: 0;
         max-width: 100%;
         padding: 0 10px;
       }
@@ -66,12 +76,14 @@
       gap: 10px;
       flex-wrap: wrap;
       align-items: center;
+      justify-content: center; /* Neu: Zentriert Buttons + Label */
     }
     .class-label {
       min-width: 140px;
       font-weight: bold;
       font-size: 18px;
       color: #330000;
+      user-select: none;
     }
     button {
       background-color: darkred;
@@ -190,80 +202,4 @@
     projectId: "notenkonferenzen",
     storageBucket: "notenkonferenzen.firebasestorage.app",
     messagingSenderId: "471386308742",
-    appId: "1:471386308742:web:73c3409b42e1db2d599107",
-    databaseURL: "https://notenkonferenzen-default-rtdb.europe-west1.firebasedatabase.app/"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  const statusEl = document.querySelector('.status');
-  const titleEl = document.getElementById('pageTitle');
-  let timerInterval;
-  let unlocked = false;
-  let currentClass = null;
-
-  db.ref('konferenz').on('value', snap => {
-    const data = snap.val();
-    clearInterval(timerInterval);
-    document.querySelectorAll('button').forEach(btn =>
-      btn.classList.remove('active')
-    );
-
-    if (data && data.klasse && data.startzeit) {
-      const start = new Date(data.startzeit);
-      currentClass = data.klasse;
-
-      const activeBtn = [...document.querySelectorAll('button')].find(
-        btn => btn.textContent === currentClass
-      );
-      if (activeBtn) activeBtn.classList.add('active');
-
-      timerInterval = setInterval(() => {
-        const diff = Math.floor((Date.now() - start) / 1000);
-        const min = Math.floor(diff / 60), sec = diff % 60;
-        statusEl.textContent =
-          `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
-      }, 1000);
-    } else {
-      statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
-      currentClass = null;
-    }
-  });
-
-  function selectClass(className) {
-    if (!unlocked) return;
-    if (className === currentClass) return;
-    db.ref('konferenz').set({
-      klasse: className,
-      startzeit: new Date().toISOString()
-    });
-    toggleLock(false); // sperren nach Auswahl
-  }
-
-  function toggleLock(force = null) {
-    const icon = document.getElementById('lockIcon');
-    if (force !== null) {
-      unlocked = force;
-    } else {
-      unlocked = !unlocked;
-    }
-
-    if (unlocked) {
-      icon.classList.add('unlocked');
-    } else {
-      icon.classList.remove('unlocked');
-    }
-  }
-
-  // Timer zurücksetzen, wenn Schloss entsperrt ist und man Doppelklick auf Überschrift macht
-  titleEl.ondblclick = () => {
-    if (!unlocked) return; // nur wenn entsperrt
-    // Konferenzdaten entfernen
-    db.ref('konferenz').remove();
-    // Sperre nach Reset
-    toggleLock(false);
-  };
-</script>
-</body>
-</html>
+    app
