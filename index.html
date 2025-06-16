@@ -13,7 +13,7 @@
     h1 {
       text-align: center;
       margin-bottom: 40px;
-      cursor: default;
+      cursor: pointer;
       user-select: none;
     }
     .logo {
@@ -25,15 +25,27 @@
     }
     @media (max-width: 1024px) {
       .logo {
-        left: 40px;
+        left: 20px;
         top: 40px;
+        height: 50px;
+      }
+      .container {
+        margin-left: 20px;
+        max-width: calc(100% - 40px);
+        padding-right: 20px;
       }
     }
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       .logo {
         position: static;
         display: block;
-        margin: 0 auto 20px;
+        margin: 10px auto 20px auto;
+        height: 45px;
+      }
+      .container {
+        margin-left: 0;
+        max-width: 100%;
+        padding: 0 10px;
       }
     }
     .status {
@@ -45,19 +57,6 @@
     .container {
       margin-left: 540px;
       max-width: 900px;
-    }
-    @media (max-width: 1024px) {
-      .container {
-        margin-left: 80px;
-        max-width: 600px;
-      }
-    }
-    @media (max-width: 600px) {
-      .container {
-        margin-left: 0;
-        max-width: 100%;
-        padding: 0 10px;
-      }
     }
     .class-row {
       margin-bottom: 15px;
@@ -103,18 +102,22 @@
       height: 40px;
       cursor: pointer;
       opacity: 1;
-      transition: fill 0.3s, opacity 0.3s;
+      transition: opacity 0.3s;
       user-select: none;
-      fill: black;
+      filter: invert(0); /* schwarz */
     }
     .lock.unlocked {
-      fill: gray;
+      filter: invert(0.5); /* grau */
       opacity: 0.7;
     }
   </style>
 </head>
 <body>
-  <img src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png" alt="Schullogo" class="logo" />
+  <img
+    src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png"
+    alt="Schullogo"
+    class="logo"
+  />
   <h1 ondblclick="resetTimer()">Übersicht über die Notenkonferenzen</h1>
   <div class="status">Die Konferenzen haben noch nicht begonnen.</div>
   <div class="container">
@@ -167,13 +170,19 @@
     </div>
   </div>
 
-  <!-- Schloss-SVG als Icon -->
-  <svg id="lockIcon" class="lock" ondblclick="toggleLock()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40" title="Doppelklick zum Sperren/Entsperren">
-    <path d="M12 17a1.5 1.5 0 0 0 1.5-1.5V12a1.5 1.5 0 0 0-3 0v3.5A1.5 1.5 0 0 0 12 17zm6-6h-1V8a5 5 0 0 0-10 0v3H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zm-8-3a3 3 0 0 1 6 0v3H10V8z"/>
-  </svg>
+  <!-- Schloss-Icon -->
+  <img
+    id="lockIcon"
+    src="https://cdn-icons-png.flaticon.com/512/565/565655.png"
+    alt="Schloss"
+    class="lock"
+    ondblclick="toggleLock()"
+    title="Doppelklick zum Entsperren / Sperren"
+  />
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCIOeOJnqY3yHjbl6Ho14PYO6lpcOZtjfA",
@@ -182,47 +191,55 @@
       storageBucket: "notenkonferenzen.firebasestorage.app",
       messagingSenderId: "471386308742",
       appId: "1:471386308742:web:73c3409b42e1db2d599107",
-      databaseURL: "https://notenkonferenzen-default-rtdb.europe-west1.firebasedatabase.app/"
+      databaseURL:
+        "https://notenkonferenzen-default-rtdb.europe-west1.firebasedatabase.app/",
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const statusEl = document.querySelector('.status');
-    const lockIcon = document.getElementById('lockIcon');
+    const statusEl = document.querySelector(".status");
+    const lockIcon = document.getElementById("lockIcon");
     let timerInterval;
     let unlocked = false;
     let currentClass = null;
+    let timerStart = null;
 
-    db.ref('konferenz').on('value', snap => {
+    db.ref("konferenz").on("value", (snap) => {
       const data = snap.val();
       clearInterval(timerInterval);
-      document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll("button").forEach((btn) =>
+        btn.classList.remove("active")
+      );
 
       if (data && data.klasse && data.startzeit) {
-        const start = new Date(data.startzeit);
+        timerStart = new Date(data.startzeit);
         currentClass = data.klasse;
 
-        const activeBtn = [...document.querySelectorAll('button')].find(btn => btn.textContent === currentClass);
-        if (activeBtn) activeBtn.classList.add('active');
+        const activeBtn = [...document.querySelectorAll("button")].find(
+          (btn) => btn.textContent === currentClass
+        );
+        if (activeBtn) activeBtn.classList.add("active");
 
         timerInterval = setInterval(() => {
-          const diff = Math.floor((Date.now() - start) / 1000);
-          const min = Math.floor(diff / 60), sec = diff % 60;
+          const diff = Math.floor((Date.now() - timerStart) / 1000);
+          const min = Math.floor(diff / 60),
+            sec = diff % 60;
           statusEl.textContent = `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
         }, 1000);
       } else {
         statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
         currentClass = null;
+        timerStart = null;
       }
     });
 
     function selectClass(className) {
       if (!unlocked) return;
       if (className === currentClass) return;
-      db.ref('konferenz').set({
+      db.ref("konferenz").set({
         klasse: className,
-        startzeit: new Date().toISOString()
+        startzeit: new Date().toISOString(),
       });
       toggleLock(false); // automatisch sperren nach Auswahl
     }
@@ -235,17 +252,17 @@
       }
 
       if (unlocked) {
-        lockIcon.classList.add('unlocked');
+        lockIcon.src = "https://cdn-icons-png.flaticon.com/512/565/565659.png"; // offen
+        lockIcon.classList.add("unlocked");
       } else {
-        lockIcon.classList.remove('unlocked');
+        lockIcon.src = "https://cdn-icons-png.flaticon.com/512/565/565655.png"; // geschlossen
+        lockIcon.classList.remove("unlocked");
       }
     }
 
-    // Reset timer und Status wenn Doppelklick auf Überschrift + Schloss entsperrt
     function resetTimer() {
       if (!unlocked) return;
-      db.ref('konferenz').remove();
-      toggleLock(false);
+      db.ref("konferenz").set(null);
     }
   </script>
 </body>
