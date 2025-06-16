@@ -46,27 +46,29 @@
     .container {
       max-width: 900px;
       margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
     }
-    .buttons-wrapper {
-      display: grid;
-      grid-auto-flow: column;
-      grid-auto-columns: max-content;
-      gap: 20px;
-      justify-content: center;
+    /* Jede Klassenreihe: Label + Buttons nebeneinander */
+    .class-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      user-select: none;
+    }
+    .class-label {
+      min-width: 100px;
+      font-weight: bold;
+      font-size: 18px;
+      color: #330000;
+      padding-top: 12px; /* um die Beschriftung etwas vertikal zum Button zu zentrieren */
       user-select: none;
     }
     .buttons-column {
       display: flex;
       flex-direction: column;
-      align-items: center;
       gap: 10px;
-    }
-    .column-label {
-      font-weight: bold;
-      font-size: 18px;
-      margin-bottom: 12px;
-      color: #330000;
-      white-space: nowrap;
     }
     button {
       background-color: darkred;
@@ -79,6 +81,7 @@
       min-width: 70px;
       width: 100%;
       transition: background-color 0.3s;
+      user-select: none;
     }
     button:focus {
       outline: 2px solid #ff9999;
@@ -114,9 +117,9 @@
   <h1 id="pageTitle" tabindex="0" aria-label="Notenkonferenzen Überschrift">Übersicht über die Notenkonferenzen</h1>
   <div class="status">Die Konferenzen haben noch nicht begonnen.</div>
   <div class="container">
-    <div class="buttons-wrapper">
+    <div class="class-row">
+      <div class="class-label">5. Klassen</div>
       <div class="buttons-column">
-        <div class="column-label">5. Klassen</div>
         <button ondblclick="selectClass('5a')">5a</button>
         <button ondblclick="selectClass('6a')">6a</button>
         <button ondblclick="selectClass('7a')">7a</button>
@@ -124,8 +127,11 @@
         <button ondblclick="selectClass('9a')">9a</button>
         <button ondblclick="selectClass('10a')">10a</button>
       </div>
+    </div>
+
+    <div class="class-row">
+      <div class="class-label">6. Klassen</div>
       <div class="buttons-column">
-        <div class="column-label">6. Klassen</div>
         <button ondblclick="selectClass('5b')">5b</button>
         <button ondblclick="selectClass('6b')">6b</button>
         <button ondblclick="selectClass('7b')">7b</button>
@@ -133,8 +139,11 @@
         <button ondblclick="selectClass('9b')">9b</button>
         <button ondblclick="selectClass('10b')">10b</button>
       </div>
+    </div>
+
+    <div class="class-row">
+      <div class="class-label">7. Klassen</div>
       <div class="buttons-column">
-        <div class="column-label">7. Klassen</div>
         <button ondblclick="selectClass('5c')">5c</button>
         <button ondblclick="selectClass('6c')">6c</button>
         <button ondblclick="selectClass('7c')">7c</button>
@@ -142,8 +151,11 @@
         <button ondblclick="selectClass('9c')">9c</button>
         <button ondblclick="selectClass('10c')">10c</button>
       </div>
+    </div>
+
+    <div class="class-row">
+      <div class="class-label">8. Klassen</div>
       <div class="buttons-column">
-        <div class="column-label">8. Klassen</div>
         <button ondblclick="selectClass('5d')">5d</button>
         <button ondblclick="selectClass('6d')">6d</button>
         <button ondblclick="selectClass('7d')">7d</button>
@@ -151,8 +163,11 @@
         <button ondblclick="selectClass('9d')">9d</button>
         <button ondblclick="selectClass('10d')">10d</button>
       </div>
+    </div>
+
+    <div class="class-row">
+      <div class="class-label">9. Klassen</div>
       <div class="buttons-column">
-        <div class="column-label">9. Klassen</div>
         <button ondblclick="selectClass('5e')">5e</button>
         <button ondblclick="selectClass('6e')">6e</button>
         <button ondblclick="selectClass('7e')">7e</button>
@@ -214,4 +229,41 @@
       if (activeBtn) activeBtn.classList.add('active');
 
       timerInterval = setInterval(() => {
-        const diff = Math.floor((
+        const diff = Math.floor((Date.now() - start) / 1000);
+        const min = Math.floor(diff / 60), sec = diff % 60;
+        statusEl.textContent =
+          `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
+      }, 1000);
+    } else {
+      statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
+      currentClass = null;
+    }
+  });
+
+  function selectClass(className) {
+    if (!unlocked) return;
+    if (className === currentClass) return;
+    db.ref('konferenz').set({
+      klasse: className,
+      startzeit: new Date().toISOString()
+    });
+    toggleLock(false); // sperren nach Auswahl
+  }
+
+  function toggleLock(force = null) {
+    const icon = document.getElementById('lockIcon');
+    if (force !== null) {
+      unlocked = force;
+    } else {
+      unlocked = !unlocked;
+    }
+
+    if (unlocked) {
+      icon.classList.add('unlocked');
+    } else {
+      icon.classList.remove('unlocked');
+    }
+  }
+</script>
+</body>
+</html>
