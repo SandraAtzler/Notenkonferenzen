@@ -13,6 +13,8 @@
     h1 {
       text-align: center;
       margin-bottom: 40px;
+      user-select: none;
+      cursor: default;
     }
     .logo {
       position: absolute;
@@ -39,6 +41,7 @@
       font-weight: bold;
       margin-bottom: 30px;
       text-align: center;
+      user-select: none;
     }
     .container {
       margin-left: 540px;
@@ -113,7 +116,7 @@
 </head>
 <body>
   <img src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png" alt="Schullogo" class="logo" />
-  <h1>Übersicht über die Notenkonferenzen</h1>
+  <h1 id="pageTitle" tabindex="0" aria-label="Notenkonferenzen Überschrift">Übersicht über die Notenkonferenzen</h1>
   <div class="status">Die Konferenzen haben noch nicht begonnen.</div>
   <div class="container">
     <div class="class-row">
@@ -195,6 +198,7 @@
   const db = firebase.database();
 
   const statusEl = document.querySelector('.status');
+  const titleEl = document.getElementById('pageTitle');
   let timerInterval;
   let unlocked = false;
   let currentClass = null;
@@ -234,7 +238,7 @@
       klasse: className,
       startzeit: new Date().toISOString()
     });
-    toggleLock(false); // automatisch sperren nach Auswahl
+    toggleLock(false); // sperren nach Auswahl
   }
 
   function toggleLock(force = null) {
@@ -251,6 +255,15 @@
       icon.classList.remove('unlocked');
     }
   }
+
+  // Timer zurücksetzen, wenn Schloss entsperrt ist und man Doppelklick auf Überschrift macht
+  titleEl.ondblclick = () => {
+    if (!unlocked) return; // nur wenn entsperrt
+    // Konferenzdaten entfernen
+    db.ref('konferenz').remove();
+    // Sperre nach Reset
+    toggleLock(false);
+  };
 </script>
 </body>
 </html>
