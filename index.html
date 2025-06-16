@@ -44,44 +44,49 @@
       user-select: none;
     }
     .container {
+      margin-left: 600px; /* weiter rechts als vorher */
       max-width: 900px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
     }
-    /* Jede Zeile: Label links, Buttons horizontal rechts */
+    @media (max-width: 1024px) {
+      .container {
+        margin-left: 140px; /* auch hier etwas weiter rechts */
+        max-width: 600px;
+      }
+    }
+    @media (max-width: 600px) {
+      .container {
+        margin-left: 20px;
+        max-width: 100%;
+        padding: 0 10px;
+      }
+    }
     .class-row {
+      margin-bottom: 15px;
       display: flex;
+      gap: 10px;
       align-items: center;
-      gap: 15px;
-      user-select: none;
     }
     .class-label {
-      min-width: 100px;
+      min-width: 120px;
       font-weight: bold;
       font-size: 18px;
       color: #330000;
-      user-select: none;
     }
-    .buttons-row {
+    .class-buttons {
       display: flex;
       gap: 10px;
-      flex-wrap: wrap;
-      flex-grow: 1;
     }
     button {
       background-color: darkred;
       color: white;
       border: none;
-      padding: 10px 15px;
+      padding: 10px 18px;
       border-radius: 5px;
       cursor: pointer;
+      min-width: 70px;
       font-size: 16px;
-      min-width: 60px;
-      user-select: none;
       transition: background-color 0.3s;
-      white-space: nowrap;
+      user-select: none;
     }
     button:focus {
       outline: 2px solid #ff9999;
@@ -119,7 +124,7 @@
   <div class="container">
     <div class="class-row">
       <div class="class-label">5. Klassen</div>
-      <div class="buttons-row">
+      <div class="class-buttons">
         <button ondblclick="selectClass('5a')">5a</button>
         <button ondblclick="selectClass('5b')">5b</button>
         <button ondblclick="selectClass('5c')">5c</button>
@@ -127,10 +132,9 @@
         <button ondblclick="selectClass('5e')">5e</button>
       </div>
     </div>
-
     <div class="class-row">
       <div class="class-label">6. Klassen</div>
-      <div class="buttons-row">
+      <div class="class-buttons">
         <button ondblclick="selectClass('6a')">6a</button>
         <button ondblclick="selectClass('6b')">6b</button>
         <button ondblclick="selectClass('6c')">6c</button>
@@ -138,10 +142,9 @@
         <button ondblclick="selectClass('6e')">6e</button>
       </div>
     </div>
-
     <div class="class-row">
       <div class="class-label">7. Klassen</div>
-      <div class="buttons-row">
+      <div class="class-buttons">
         <button ondblclick="selectClass('7a')">7a</button>
         <button ondblclick="selectClass('7b')">7b</button>
         <button ondblclick="selectClass('7c')">7c</button>
@@ -149,10 +152,9 @@
         <button ondblclick="selectClass('7e')">7e</button>
       </div>
     </div>
-
     <div class="class-row">
       <div class="class-label">8. Klassen</div>
-      <div class="buttons-row">
+      <div class="class-buttons">
         <button ondblclick="selectClass('8a')">8a</button>
         <button ondblclick="selectClass('8b')">8b</button>
         <button ondblclick="selectClass('8c')">8c</button>
@@ -160,10 +162,9 @@
         <button ondblclick="selectClass('8e')">8e</button>
       </div>
     </div>
-
     <div class="class-row">
       <div class="class-label">9. Klassen</div>
-      <div class="buttons-row">
+      <div class="class-buttons">
         <button ondblclick="selectClass('9a')">9a</button>
         <button ondblclick="selectClass('9b')">9b</button>
         <button ondblclick="selectClass('9c')">9c</button>
@@ -171,10 +172,9 @@
         <button ondblclick="selectClass('9e')">9e</button>
       </div>
     </div>
-
     <div class="class-row">
       <div class="class-label">10. Klassen</div>
-      <div class="buttons-row">
+      <div class="class-buttons">
         <button ondblclick="selectClass('10a')">10a</button>
         <button ondblclick="selectClass('10b')">10b</button>
         <button ondblclick="selectClass('10c')">10c</button>
@@ -238,7 +238,7 @@
         const diff = Math.floor((Date.now() - start) / 1000);
         const min = Math.floor(diff / 60), sec = diff % 60;
         statusEl.textContent =
-          `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
+          `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
       }, 1000);
     } else {
       statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
@@ -256,4 +256,27 @@
     toggleLock(false); // sperren nach Auswahl
   }
 
-  function toggleLock(force = null)
+  function toggleLock(force = null) {
+    const icon = document.getElementById('lockIcon');
+    if (force !== null) {
+      unlocked = force;
+    } else {
+      unlocked = !unlocked;
+    }
+
+    if (unlocked) {
+      icon.classList.add('unlocked');
+    } else {
+      icon.classList.remove('unlocked');
+    }
+  }
+
+  // Timer zurücksetzen, wenn Schloss entsperrt ist und man Doppelklick auf Überschrift macht
+  titleEl.ondblclick = () => {
+    if (!unlocked) return;
+    db.ref('konferenz').remove();
+    toggleLock(false);
+  };
+</script>
+</body>
+</html>
