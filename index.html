@@ -81,6 +81,8 @@
       font-size: 16px;
       transition: background-color 0.3s;
       user-select: none;
+      text-align: center;
+      flex: 0 0 60px;
     }
     button:focus {
       outline: 2px solid #ff9999;
@@ -160,87 +162,93 @@
     </div>
   </div>
 
-<!-- Schloss-Icon (initial geschlossen) -->
-<img id="lockIcon"
-  src="https://cdn-icons-png.flaticon.com/512/565/565655.png"
-  alt="Schloss"
-  class="lock"
-  ondblclick="toggleLock()"
-  title="Doppelklick zum Entsperren / Sperren" />
+  <!-- Schloss-Icon -->
+  <img id="lockIcon"
+    src="https://cdn-icons-png.flaticon.com/512/565/565655.png"
+    alt="Schloss"
+    class="lock"
+    ondblclick="toggleLock()"
+    title="Doppelklick zum Entsperren / Sperren" />
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCIOeOJnqY3yHjbl6Ho14PYO6lpcOZtjfA",
-    authDomain: "notenkonferenzen.firebaseapp.com",
-    projectId: "notenkonferenzen",
-    storageBucket: "notenkonferenzen.firebasestorage.app",
-    messagingSenderId: "471386308742",
-    appId: "1:471386308742:web:73c3409b42e1db2d599107",
-    databaseURL: "https://notenkonferenzen-default-rtdb.europe-west1.firebasedatabase.app/"
-  };
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+  <script>
+    // 🛡️ Variable ganz oben
+    let unlocked = false;
 
-  const statusEl = document.querySelector('.status');
-  let timerInterval;
-  let unlocked = false;
-  let currentClass = null;
+    function toggleLock(force = null) {
+      const icon = document.getElementById('lockIcon');
+      if (force !== null) {
+        unlocked = force;
+      } else {
+        unlocked = !unlocked;
+      }
 
-  db.ref('konferenz').on('value', snap => {
-    const data = snap.val();
-    clearInterval(timerInterval);
-    document.querySelectorAll('button').forEach(btn =>
-      btn.classList.remove('active')
-    );
+      if (unlocked) {
+        icon.src = "https://cdn-icons-png.flaticon.com/512/565/565659.png"; // offenes Schloss
+        icon.style.opacity = 0.3;
+      } else {
+        icon.src = "https://cdn-icons-png.flaticon.com/512/565/565655.png"; // geschlossenes Schloss
+        icon.style.opacity = 1;
+      }
+    }
 
-    if (data && data.klasse && data.startzeit) {
-      const start = new Date(data.startzeit);
-      currentClass = data.klasse;
+    const firebaseConfig = {
+      apiKey: "AIzaSyCIOeOJnqY3yHjbl6Ho14PYO6lpcOZtjfA",
+      authDomain: "notenkonferenzen.firebaseapp.com",
+      projectId: "notenkonferenzen",
+      storageBucket: "notenkonferenzen.firebasestorage.app",
+      messagingSenderId: "471386308742",
+      appId: "1:471386308742:web:73c3409b42e1db2d599107",
+      databaseURL: "https://notenkonferenzen-default-rtdb.europe-west1.firebasedatabase.app/"
+    };
 
-      const activeBtn = [...document.querySelectorAll('button')].find(
-        btn => btn.textContent === currentClass
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const statusEl = document.querySelector('.status');
+    let timerInterval;
+    let currentClass = null;
+
+    db.ref('konferenz').on('value', snap => {
+      const data = snap.val();
+      clearInterval(timerInterval);
+      document.querySelectorAll('button').forEach(btn =>
+        btn.classList.remove('active')
       );
-      if (activeBtn) activeBtn.classList.add('active');
 
-      timerInterval = setInterval(() => {
-        const diff = Math.floor((Date.now() - start) / 1000);
-        const min = Math.floor(diff / 60), sec = diff % 60;
-        statusEl.textContent =
-          `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
-      }, 1000);
-    } else {
-      statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
-      currentClass = null;
-    }
-  });
+      if (data && data.klasse && data.startzeit) {
+        const start = new Date(data.startzeit);
+        currentClass = data.klasse;
 
-  function selectClass(className) {
-    if (!unlocked) return;
-    if (className === currentClass) return;
-    db.ref('konferenz').set({
-      klasse: className,
-      startzeit: new Date().toISOString()
+        const activeBtn = [...document.querySelectorAll('button')].find(
+          btn => btn.textContent === currentClass
+        );
+        if (activeBtn) activeBtn.classList.add('active');
+
+        timerInterval = setInterval(() => {
+          const diff = Math.floor((Date.now() - start) / 1000);
+          const min = Math.floor(diff / 60), sec = diff % 60;
+          statusEl.textContent =
+            `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
+        }, 1000);
+      } else {
+        statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
+        currentClass = null;
+      }
     });
-    toggleLock(false); // automatisch sperren nach Auswahl
-  }
 
-  function toggleLock(force = null) {
-    const icon = document.getElementById('lockIcon');
-    if (force !== null) {
-      unlocked = force;
-    } else {
-      unlocked = !unlocked;
+    function selectClass(className) {
+      if (!unlocked) return;
+      if (className === currentClass) return;
+      db.ref('konferenz').set({
+        klasse: className,
+        startzeit: new Date().toISOString()
+      });
+      toggleLock(false); // automatisch sperren
     }
-
-    if (unlocked) {
-      icon.src = "https://cdn-icons-png.flaticon.com/512/565/565659.png"; // offen
-      icon.style.opacity = 0.3;
-    } else {
-      icon.src = "https://cdn-icons-png.flaticon.com/512/565/565655.png"; // geschlossen
-      icon.style.opacity = 1;
-    }
-  }
-</script>
+  </script>
 </body>
 </html>
