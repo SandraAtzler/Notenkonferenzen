@@ -13,8 +13,7 @@
     h1 {
       text-align: center;
       margin-bottom: 40px;
-      cursor: pointer;
-      user-select: none;
+      cursor: default;
     }
     .logo {
       position: absolute;
@@ -25,27 +24,15 @@
     }
     @media (max-width: 1024px) {
       .logo {
-        left: 20px;
+        left: 40px;
         top: 40px;
-        height: 50px;
-      }
-      .container {
-        margin-left: 20px;
-        max-width: calc(100% - 40px);
-        padding-right: 20px;
       }
     }
-    @media (max-width: 768px) {
+    @media (max-width: 600px) {
       .logo {
         position: static;
         display: block;
-        margin: 10px auto 20px auto;
-        height: 45px;
-      }
-      .container {
-        margin-left: 0;
-        max-width: 100%;
-        padding: 0 10px;
+        margin: 0 auto 20px;
       }
     }
     .status {
@@ -57,6 +44,19 @@
     .container {
       margin-left: 540px;
       max-width: 900px;
+    }
+    @media (max-width: 1024px) {
+      .container {
+        margin-left: 80px;
+        max-width: 600px;
+      }
+    }
+    @media (max-width: 600px) {
+      .container {
+        margin-left: 0;
+        max-width: 100%;
+        padding: 0 10px;
+      }
     }
     .class-row {
       margin-bottom: 15px;
@@ -104,20 +104,25 @@
       opacity: 1;
       transition: opacity 0.3s;
       user-select: none;
-      filter: invert(0); /* schwarz */
     }
-    .lock.unlocked {
-      filter: invert(0.5); /* grau */
-      opacity: 0.7;
+    /* Fensterbreiten-Anzeige */
+    #viewportWidth {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      font-family: monospace;
+      z-index: 1000;
+      user-select: none;
     }
   </style>
 </head>
 <body>
-  <img
-    src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png"
-    alt="Schullogo"
-    class="logo"
-  />
+  <img src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png" alt="Schullogo" class="logo" />
   <h1 ondblclick="resetTimer()">Übersicht über die Notenkonferenzen</h1>
   <div class="status">Die Konferenzen haben noch nicht begonnen.</div>
   <div class="container">
@@ -171,18 +176,18 @@
   </div>
 
   <!-- Schloss-Icon -->
-  <img
-    id="lockIcon"
+  <img id="lockIcon"
     src="https://cdn-icons-png.flaticon.com/512/565/565655.png"
     alt="Schloss"
     class="lock"
     ondblclick="toggleLock()"
-    title="Doppelklick zum Entsperren / Sperren"
-  />
+    title="Doppelklick zum Entsperren / Sperren" />
 
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <!-- Fensterbreiten-Anzeige -->
+  <div id="viewportWidth"></div>
 
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCIOeOJnqY3yHjbl6Ho14PYO6lpcOZtjfA",
@@ -191,60 +196,57 @@
       storageBucket: "notenkonferenzen.firebasestorage.app",
       messagingSenderId: "471386308742",
       appId: "1:471386308742:web:73c3409b42e1db2d599107",
-      databaseURL:
-        "https://notenkonferenzen-default-rtdb.europe-west1.firebasedatabase.app/",
+      databaseURL: "https://notenkonferenzen-default-rtdb.europe-west1.firebasedatabase.app/"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const statusEl = document.querySelector(".status");
-    const lockIcon = document.getElementById("lockIcon");
+    const statusEl = document.querySelector('.status');
     let timerInterval;
     let unlocked = false;
     let currentClass = null;
-    let timerStart = null;
 
-    db.ref("konferenz").on("value", (snap) => {
+    db.ref('konferenz').on('value', snap => {
       const data = snap.val();
       clearInterval(timerInterval);
-      document.querySelectorAll("button").forEach((btn) =>
-        btn.classList.remove("active")
+      document.querySelectorAll('button').forEach(btn =>
+        btn.classList.remove('active')
       );
 
       if (data && data.klasse && data.startzeit) {
-        timerStart = new Date(data.startzeit);
+        const start = new Date(data.startzeit);
         currentClass = data.klasse;
 
-        const activeBtn = [...document.querySelectorAll("button")].find(
-          (btn) => btn.textContent === currentClass
+        const activeBtn = [...document.querySelectorAll('button')].find(
+          btn => btn.textContent === currentClass
         );
-        if (activeBtn) activeBtn.classList.add("active");
+        if (activeBtn) activeBtn.classList.add('active');
 
         timerInterval = setInterval(() => {
-          const diff = Math.floor((Date.now() - timerStart) / 1000);
-          const min = Math.floor(diff / 60),
-            sec = diff % 60;
-          statusEl.textContent = `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
+          const diff = Math.floor((Date.now() - start) / 1000);
+          const min = Math.floor(diff / 60), sec = diff % 60;
+          statusEl.textContent =
+            `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
         }, 1000);
       } else {
         statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
         currentClass = null;
-        timerStart = null;
       }
     });
 
     function selectClass(className) {
       if (!unlocked) return;
       if (className === currentClass) return;
-      db.ref("konferenz").set({
+      db.ref('konferenz').set({
         klasse: className,
-        startzeit: new Date().toISOString(),
+        startzeit: new Date().toISOString()
       });
       toggleLock(false); // automatisch sperren nach Auswahl
     }
 
     function toggleLock(force = null) {
+      const icon = document.getElementById('lockIcon');
       if (force !== null) {
         unlocked = force;
       } else {
@@ -252,18 +254,29 @@
       }
 
       if (unlocked) {
-        lockIcon.src = "https://cdn-icons-png.flaticon.com/512/565/565659.png"; // offen
-        lockIcon.classList.add("unlocked");
+        icon.src = "https://cdn-icons-png.flaticon.com/512/565/565659.png"; // offen
+        icon.style.opacity = 0.3;
       } else {
-        lockIcon.src = "https://cdn-icons-png.flaticon.com/512/565/565655.png"; // geschlossen
-        lockIcon.classList.remove("unlocked");
+        icon.src = "https://cdn-icons-png.flaticon.com/512/565/565655.png"; // geschlossen
+        icon.style.opacity = 1;
       }
     }
 
     function resetTimer() {
       if (!unlocked) return;
-      db.ref("konferenz").set(null);
+      db.ref('konferenz').remove();
+      toggleLock(false);
     }
+
+    // Fensterbreite anzeigen
+    const viewportWidthEl = document.getElementById('viewportWidth');
+
+    function updateViewportWidth() {
+      viewportWidthEl.textContent = `Breite: ${window.innerWidth}px`;
+    }
+
+    window.addEventListener('resize', updateViewportWidth);
+    updateViewportWidth();
   </script>
 </body>
 </html>
