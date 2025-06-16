@@ -50,10 +50,10 @@
       flex-direction: column;
       gap: 25px;
     }
-    /* Jede Klassenreihe: Label + Buttons nebeneinander */
+    /* Jede Zeile: Label links, Buttons horizontal rechts */
     .class-row {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 15px;
       user-select: none;
     }
@@ -62,26 +62,26 @@
       font-weight: bold;
       font-size: 18px;
       color: #330000;
-      padding-top: 12px; /* um die Beschriftung etwas vertikal zum Button zu zentrieren */
       user-select: none;
     }
-    .buttons-column {
+    .buttons-row {
       display: flex;
-      flex-direction: column;
       gap: 10px;
+      flex-wrap: wrap;
+      flex-grow: 1;
     }
     button {
       background-color: darkred;
       color: white;
       border: none;
-      padding: 10px;
+      padding: 10px 15px;
       border-radius: 5px;
       cursor: pointer;
       font-size: 16px;
-      min-width: 70px;
-      width: 100%;
-      transition: background-color 0.3s;
+      min-width: 60px;
       user-select: none;
+      transition: background-color 0.3s;
+      white-space: nowrap;
     }
     button:focus {
       outline: 2px solid #ff9999;
@@ -119,60 +119,66 @@
   <div class="container">
     <div class="class-row">
       <div class="class-label">5. Klassen</div>
-      <div class="buttons-column">
+      <div class="buttons-row">
         <button ondblclick="selectClass('5a')">5a</button>
-        <button ondblclick="selectClass('6a')">6a</button>
-        <button ondblclick="selectClass('7a')">7a</button>
-        <button ondblclick="selectClass('8a')">8a</button>
-        <button ondblclick="selectClass('9a')">9a</button>
-        <button ondblclick="selectClass('10a')">10a</button>
+        <button ondblclick="selectClass('5b')">5b</button>
+        <button ondblclick="selectClass('5c')">5c</button>
+        <button ondblclick="selectClass('5d')">5d</button>
+        <button ondblclick="selectClass('5e')">5e</button>
       </div>
     </div>
 
     <div class="class-row">
       <div class="class-label">6. Klassen</div>
-      <div class="buttons-column">
-        <button ondblclick="selectClass('5b')">5b</button>
+      <div class="buttons-row">
+        <button ondblclick="selectClass('6a')">6a</button>
         <button ondblclick="selectClass('6b')">6b</button>
-        <button ondblclick="selectClass('7b')">7b</button>
-        <button ondblclick="selectClass('8b')">8b</button>
-        <button ondblclick="selectClass('9b')">9b</button>
-        <button ondblclick="selectClass('10b')">10b</button>
+        <button ondblclick="selectClass('6c')">6c</button>
+        <button ondblclick="selectClass('6d')">6d</button>
+        <button ondblclick="selectClass('6e')">6e</button>
       </div>
     </div>
 
     <div class="class-row">
       <div class="class-label">7. Klassen</div>
-      <div class="buttons-column">
-        <button ondblclick="selectClass('5c')">5c</button>
-        <button ondblclick="selectClass('6c')">6c</button>
+      <div class="buttons-row">
+        <button ondblclick="selectClass('7a')">7a</button>
+        <button ondblclick="selectClass('7b')">7b</button>
         <button ondblclick="selectClass('7c')">7c</button>
-        <button ondblclick="selectClass('8c')">8c</button>
-        <button ondblclick="selectClass('9c')">9c</button>
-        <button ondblclick="selectClass('10c')">10c</button>
+        <button ondblclick="selectClass('7d')">7d</button>
+        <button ondblclick="selectClass('7e')">7e</button>
       </div>
     </div>
 
     <div class="class-row">
       <div class="class-label">8. Klassen</div>
-      <div class="buttons-column">
-        <button ondblclick="selectClass('5d')">5d</button>
-        <button ondblclick="selectClass('6d')">6d</button>
-        <button ondblclick="selectClass('7d')">7d</button>
+      <div class="buttons-row">
+        <button ondblclick="selectClass('8a')">8a</button>
+        <button ondblclick="selectClass('8b')">8b</button>
+        <button ondblclick="selectClass('8c')">8c</button>
         <button ondblclick="selectClass('8d')">8d</button>
-        <button ondblclick="selectClass('9d')">9d</button>
-        <button ondblclick="selectClass('10d')">10d</button>
+        <button ondblclick="selectClass('8e')">8e</button>
       </div>
     </div>
 
     <div class="class-row">
       <div class="class-label">9. Klassen</div>
-      <div class="buttons-column">
-        <button ondblclick="selectClass('5e')">5e</button>
-        <button ondblclick="selectClass('6e')">6e</button>
-        <button ondblclick="selectClass('7e')">7e</button>
-        <button ondblclick="selectClass('8e')">8e</button>
+      <div class="buttons-row">
+        <button ondblclick="selectClass('9a')">9a</button>
+        <button ondblclick="selectClass('9b')">9b</button>
+        <button ondblclick="selectClass('9c')">9c</button>
+        <button ondblclick="selectClass('9d')">9d</button>
         <button ondblclick="selectClass('9e')">9e</button>
+      </div>
+    </div>
+
+    <div class="class-row">
+      <div class="class-label">10. Klassen</div>
+      <div class="buttons-row">
+        <button ondblclick="selectClass('10a')">10a</button>
+        <button ondblclick="selectClass('10b')">10b</button>
+        <button ondblclick="selectClass('10c')">10c</button>
+        <button ondblclick="selectClass('10d')">10d</button>
       </div>
     </div>
   </div>
@@ -250,20 +256,4 @@
     toggleLock(false); // sperren nach Auswahl
   }
 
-  function toggleLock(force = null) {
-    const icon = document.getElementById('lockIcon');
-    if (force !== null) {
-      unlocked = force;
-    } else {
-      unlocked = !unlocked;
-    }
-
-    if (unlocked) {
-      icon.classList.add('unlocked');
-    } else {
-      icon.classList.remove('unlocked');
-    }
-  }
-</script>
-</body>
-</html>
+  function toggleLock(force = null)
