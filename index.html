@@ -93,7 +93,7 @@
       background-color: #440000;
       cursor: not-allowed;
     }
-    /* Schloss SVG unten rechts */
+    /* Schloss Bild unten rechts */
     .lock {
       position: fixed;
       bottom: 20px;
@@ -101,12 +101,12 @@
       width: 40px;
       height: 40px;
       cursor: pointer;
-      fill: black; /* Anfangsfarbe */
-      transition: fill 0.3s;
+      filter: brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+      transition: filter 0.3s;
       user-select: none;
     }
     .lock.unlocked {
-      fill: gray; /* Farbe nach Doppelklick */
+      filter: brightness(60%) saturate(10%) invert(60%) sepia(20%) saturate(400%) hue-rotate(0deg) brightness(70%) contrast(85%);
       opacity: 0.7;
     }
   </style>
@@ -165,10 +165,17 @@
     </div>
   </div>
 
-  <!-- Schloss als SVG -->
-  <svg id="lockIcon" class="lock" viewBox="0 0 24 24" ondblclick="toggleLock()" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Schloss">
-    <path d="M17 8h-1V6a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zM9 6a2 2 0 0 1 4 0v2H9V6zm8 10H7v-6h10v6z"/>
-  </svg>
+  <!-- Schloss Bild -->
+  <img
+    src="https://cdn-icons-png.flaticon.com/512/61/61457.png"
+    alt="Schloss"
+    id="lockIcon"
+    class="lock"
+    ondblclick="toggleLock()"
+    aria-label="Schloss"
+    role="button"
+    tabindex="0"
+  />
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
