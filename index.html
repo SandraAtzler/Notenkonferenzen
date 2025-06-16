@@ -101,22 +101,6 @@
       width: 40px;
       height: 40px;
       cursor: pointer;
-      opacity: 1;
-      transition: opacity 0.3s;
-      user-select: none;
-    }
-    /* Fensterbreiten-Anzeige */
-    #viewportWidth {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      font-size: 14px;
-      font-family: monospace;
-      z-index: 1000;
       user-select: none;
     }
   </style>
@@ -175,16 +159,10 @@
     </div>
   </div>
 
-  <!-- Schloss-Icon -->
-  <img id="lockIcon"
-    src="https://cdn-icons-png.flaticon.com/512/565/565655.png"
-    alt="Schloss"
-    class="lock"
-    ondblclick="toggleLock()"
-    title="Doppelklick zum Entsperren / Sperren" />
-
-  <!-- Fensterbreiten-Anzeige -->
-  <div id="viewportWidth"></div>
+  <!-- Schloss-Symbol, schwarz/hellgrau wechseln -->
+  <svg id="lockIcon" class="lock" ondblclick="toggleLock()" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg" title="Doppelklick zum Sperren/Entsperren">
+    <path d="M12 17a1.5 1.5 0 0 0 1.5-1.5V12a1.5 1.5 0 0 0-3 0v3.5A1.5 1.5 0 0 0 12 17zm6-6h-1V8a5 5 0 0 0-10 0v3H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zm-8-3a3 3 0 0 1 6 0v3H10V8z"/>
+  </svg>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -203,31 +181,27 @@
     const db = firebase.database();
 
     const statusEl = document.querySelector('.status');
-    let timerInterval;
+    const lockIcon = document.getElementById('lockIcon');
     let unlocked = false;
     let currentClass = null;
+    let timerInterval;
 
     db.ref('konferenz').on('value', snap => {
       const data = snap.val();
       clearInterval(timerInterval);
-      document.querySelectorAll('button').forEach(btn =>
-        btn.classList.remove('active')
-      );
+      document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
 
       if (data && data.klasse && data.startzeit) {
-        const start = new Date(data.startzeit);
         currentClass = data.klasse;
-
-        const activeBtn = [...document.querySelectorAll('button')].find(
-          btn => btn.textContent === currentClass
-        );
+        const start = new Date(data.startzeit);
+        const activeBtn = [...document.querySelectorAll('button')].find(btn => btn.textContent === currentClass);
         if (activeBtn) activeBtn.classList.add('active');
 
         timerInterval = setInterval(() => {
           const diff = Math.floor((Date.now() - start) / 1000);
-          const min = Math.floor(diff / 60), sec = diff % 60;
-          statusEl.textContent =
-            `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
+          const min = Math.floor(diff / 60);
+          const sec = diff % 60;
+          statusEl.textContent = `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
         }, 1000);
       } else {
         statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
@@ -242,23 +216,19 @@
         klasse: className,
         startzeit: new Date().toISOString()
       });
-      toggleLock(false); // automatisch sperren nach Auswahl
+      toggleLock(false);
     }
 
     function toggleLock(force = null) {
-      const icon = document.getElementById('lockIcon');
       if (force !== null) {
         unlocked = force;
       } else {
         unlocked = !unlocked;
       }
-
       if (unlocked) {
-        icon.src = "https://cdn-icons-png.flaticon.com/512/565/565659.png"; // offen
-        icon.style.opacity = 0.3;
+        lockIcon.style.fill = "grey";
       } else {
-        icon.src = "https://cdn-icons-png.flaticon.com/512/565/565655.png"; // geschlossen
-        icon.style.opacity = 1;
+        lockIcon.style.fill = "black";
       }
     }
 
@@ -268,15 +238,7 @@
       toggleLock(false);
     }
 
-    // Fensterbreite anzeigen
-    const viewportWidthEl = document.getElementById('viewportWidth');
-
-    function updateViewportWidth() {
-      viewportWidthEl.textContent = `Breite: ${window.innerWidth}px`;
-    }
-
-    window.addEventListener('resize', updateViewportWidth);
-    updateViewportWidth();
+    toggleLock(false); // Anfangszustand: gesperrt, schwarz
   </script>
 </body>
 </html>
