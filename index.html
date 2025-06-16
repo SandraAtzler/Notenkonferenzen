@@ -47,30 +47,26 @@
       max-width: 900px;
       margin: 0 auto;
     }
-    .class-row {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 40px;
-    }
-    .class-label {
-      font-weight: bold;
-      font-size: 18px;
-      color: #330000;
-      user-select: none;
-      min-width: 120px; /* Platz für die Klassenbezeichnung */
-      margin-right: 30px;
-    }
     .buttons-wrapper {
       display: grid;
       grid-auto-flow: column;
-      grid-auto-columns: 100px;
-      gap: 12px 20px; /* Abstand zwischen Spalten und Reihen */
-      justify-content: center; /* Zentriert alle Spalten horizontal */
+      grid-auto-columns: max-content;
+      gap: 20px;
+      justify-content: center;
+      user-select: none;
     }
     .buttons-column {
       display: flex;
       flex-direction: column;
+      align-items: center;
       gap: 10px;
+    }
+    .column-label {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: #330000;
+      white-space: nowrap;
     }
     button {
       background-color: darkred;
@@ -80,7 +76,6 @@
       border-radius: 5px;
       cursor: pointer;
       font-size: 16px;
-      user-select: none;
       min-width: 70px;
       width: 100%;
       transition: background-color 0.3s;
@@ -119,48 +114,50 @@
   <h1 id="pageTitle" tabindex="0" aria-label="Notenkonferenzen Überschrift">Übersicht über die Notenkonferenzen</h1>
   <div class="status">Die Konferenzen haben noch nicht begonnen.</div>
   <div class="container">
-    <div class="class-row">
-      <div class="class-label">Klassen</div>
-      <div class="buttons-wrapper">
-        <div class="buttons-column">
-          <button ondblclick="selectClass('5a')">5a</button>
-          <button ondblclick="selectClass('6a')">6a</button>
-          <button ondblclick="selectClass('7a')">7a</button>
-          <button ondblclick="selectClass('8a')">8a</button>
-          <button ondblclick="selectClass('9a')">9a</button>
-          <button ondblclick="selectClass('10a')">10a</button>
-        </div>
-        <div class="buttons-column">
-          <button ondblclick="selectClass('5b')">5b</button>
-          <button ondblclick="selectClass('6b')">6b</button>
-          <button ondblclick="selectClass('7b')">7b</button>
-          <button ondblclick="selectClass('8b')">8b</button>
-          <button ondblclick="selectClass('9b')">9b</button>
-          <button ondblclick="selectClass('10b')">10b</button>
-        </div>
-        <div class="buttons-column">
-          <button ondblclick="selectClass('5c')">5c</button>
-          <button ondblclick="selectClass('6c')">6c</button>
-          <button ondblclick="selectClass('7c')">7c</button>
-          <button ondblclick="selectClass('8c')">8c</button>
-          <button ondblclick="selectClass('9c')">9c</button>
-          <button ondblclick="selectClass('10c')">10c</button>
-        </div>
-        <div class="buttons-column">
-          <button ondblclick="selectClass('5d')">5d</button>
-          <button ondblclick="selectClass('6d')">6d</button>
-          <button ondblclick="selectClass('7d')">7d</button>
-          <button ondblclick="selectClass('8d')">8d</button>
-          <button ondblclick="selectClass('9d')">9d</button>
-          <button ondblclick="selectClass('10d')">10d</button>
-        </div>
-        <div class="buttons-column">
-          <button ondblclick="selectClass('5e')">5e</button>
-          <button ondblclick="selectClass('6e')">6e</button>
-          <button ondblclick="selectClass('7e')">7e</button>
-          <button ondblclick="selectClass('8e')">8e</button>
-          <button ondblclick="selectClass('9e')">9e</button>
-        </div>
+    <div class="buttons-wrapper">
+      <div class="buttons-column">
+        <div class="column-label">5. Klassen</div>
+        <button ondblclick="selectClass('5a')">5a</button>
+        <button ondblclick="selectClass('6a')">6a</button>
+        <button ondblclick="selectClass('7a')">7a</button>
+        <button ondblclick="selectClass('8a')">8a</button>
+        <button ondblclick="selectClass('9a')">9a</button>
+        <button ondblclick="selectClass('10a')">10a</button>
+      </div>
+      <div class="buttons-column">
+        <div class="column-label">6. Klassen</div>
+        <button ondblclick="selectClass('5b')">5b</button>
+        <button ondblclick="selectClass('6b')">6b</button>
+        <button ondblclick="selectClass('7b')">7b</button>
+        <button ondblclick="selectClass('8b')">8b</button>
+        <button ondblclick="selectClass('9b')">9b</button>
+        <button ondblclick="selectClass('10b')">10b</button>
+      </div>
+      <div class="buttons-column">
+        <div class="column-label">7. Klassen</div>
+        <button ondblclick="selectClass('5c')">5c</button>
+        <button ondblclick="selectClass('6c')">6c</button>
+        <button ondblclick="selectClass('7c')">7c</button>
+        <button ondblclick="selectClass('8c')">8c</button>
+        <button ondblclick="selectClass('9c')">9c</button>
+        <button ondblclick="selectClass('10c')">10c</button>
+      </div>
+      <div class="buttons-column">
+        <div class="column-label">8. Klassen</div>
+        <button ondblclick="selectClass('5d')">5d</button>
+        <button ondblclick="selectClass('6d')">6d</button>
+        <button ondblclick="selectClass('7d')">7d</button>
+        <button ondblclick="selectClass('8d')">8d</button>
+        <button ondblclick="selectClass('9d')">9d</button>
+        <button ondblclick="selectClass('10d')">10d</button>
+      </div>
+      <div class="buttons-column">
+        <div class="column-label">9. Klassen</div>
+        <button ondblclick="selectClass('5e')">5e</button>
+        <button ondblclick="selectClass('6e')">6e</button>
+        <button ondblclick="selectClass('7e')">7e</button>
+        <button ondblclick="selectClass('8e')">8e</button>
+        <button ondblclick="selectClass('9e')">9e</button>
       </div>
     </div>
   </div>
@@ -217,41 +214,4 @@
       if (activeBtn) activeBtn.classList.add('active');
 
       timerInterval = setInterval(() => {
-        const diff = Math.floor((Date.now() - start) / 1000);
-        const min = Math.floor(diff / 60), sec = diff % 60;
-        statusEl.textContent =
-          `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
-      }, 1000);
-    } else {
-      statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
-      currentClass = null;
-    }
-  });
-
-  function selectClass(className) {
-    if (!unlocked) return;
-    if (className === currentClass) return;
-    db.ref('konferenz').set({
-      klasse: className,
-      startzeit: new Date().toISOString()
-    });
-    toggleLock(false); // sperren nach Auswahl
-  }
-
-  function toggleLock(force = null) {
-    const icon = document.getElementById('lockIcon');
-    if (force !== null) {
-      unlocked = force;
-    } else {
-      unlocked = !unlocked;
-    }
-
-    if (unlocked) {
-      icon.classList.add('unlocked');
-    } else {
-      icon.classList.remove('unlocked');
-    }
-  }
-
-  // Timer zurücksetzen, wenn Schloss entsperrt ist und man Doppelklick auf Überschrift macht
-  titleEl.
+        const diff = Math.floor((
