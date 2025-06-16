@@ -25,7 +25,21 @@ function updateTimer() {
 function resetButtons() {
   buttons.forEach((btn) => btn.classList.remove("active"));
 }
+function unlock() {
+  unlocked = true;
+  const lockIcon = document.getElementById('lockIcon');
+  lockIcon.src = "https://iconduck.com/icons/22132/lock-open-512.png"; // echtes geöffnetes Schloss
+  lockIcon.style.opacity = 0.3;
+}
 
+function selectClass(className) {
+  if (!unlocked) return;
+  // ...
+  unlocked = false;
+  const lockIcon = document.getElementById('lockIcon');
+  lockIcon.src = "https://cdn-icons-png.flaticon.com/512/3064/3064197.png"; // zurück auf geschlossenes Schloss
+  lockIcon.style.opacity = 1;
+}
 lock.addEventListener("dblclick", () => {
   unlocked = !unlocked;
   lock.style.opacity = unlocked ? 1 : 0.6;
