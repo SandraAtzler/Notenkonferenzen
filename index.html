@@ -9,22 +9,33 @@
       font-family: Arial, sans-serif;
       background-color: #fefefe;
       margin: 20px;
-      padding-left: 80px; /* Flexibler linker Abstand */
     }
-
     h1 {
       text-align: center;
       margin-bottom: 40px;
       user-select: none;
       cursor: default;
     }
-
     .logo {
-      display: block;
-      margin: 0 auto 20px;
+      position: absolute;
+      left: 540px;
+      top: 90px;
       height: 60px;
+      z-index: 10;
     }
-
+    @media (max-width: 1024px) {
+      .logo {
+        left: 40px;
+        top: 40px;
+      }
+    }
+    @media (max-width: 600px) {
+      .logo {
+        position: static;
+        display: block;
+        margin: 0 auto 20px;
+      }
+    }
     .status {
       font-size: 18px;
       font-weight: bold;
@@ -32,28 +43,35 @@
       text-align: center;
       user-select: none;
     }
-
     .container {
+      padding-left: 420px;
       max-width: 1000px;
-      margin: 0 auto;
-      padding: 0 20px 0 450px;
     }
-
+    @media (max-width: 1024px) {
+      .container {
+        padding-left: 100px;
+      }
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
     .class-row {
+      margin-bottom: 15px;
       display: flex;
       align-items: center;
-      margin-bottom: 15px;
+      gap: 5px;
       flex-wrap: wrap;
-      gap: 10px;
     }
-
     .class-label {
-      min-width: 100px;
       font-weight: bold;
       font-size: 18px;
       color: #330000;
+      margin-right: 10px;
+      min-width: 130px;
     }
-
     button {
       background-color: darkred;
       color: white;
@@ -66,21 +84,17 @@
       transition: background-color 0.3s;
       user-select: none;
     }
-
     button:focus {
       outline: 2px solid #ff9999;
       outline-offset: 2px;
     }
-
     button.active {
       background-color: #e74c3c;
     }
-
     button:disabled {
       background-color: #440000;
       cursor: not-allowed;
     }
-
     .lock {
       position: fixed;
       bottom: 20px;
@@ -92,33 +106,15 @@
       transition: filter 0.3s;
       user-select: none;
     }
-
     .lock.unlocked {
       filter: brightness(60%) saturate(10%) invert(60%) sepia(20%) saturate(400%) hue-rotate(0deg) brightness(70%) contrast(85%);
       opacity: 0.7;
-    }
-
-    @media (max-width: 1024px) {
-      body {
-        padding-left: 40px;
-      }
-    }
-
-    @media (max-width: 600px) {
-      body {
-        padding-left: 10px;
-        margin: 20px 10px;
-      }
-
-      .container {
-        padding: 0 10px;
-      }
     }
   </style>
 </head>
 <body>
   <img src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png" alt="Schullogo" class="logo" />
-  <h1 id="pageTitle" tabindex="0">Übersicht über die Notenkonferenzen</h1>
+  <h1 id="pageTitle" tabindex="0" aria-label="Notenkonferenzen Überschrift">Übersicht über die Notenkonferenzen</h1>
   <div class="status">Die Konferenzen haben noch nicht begonnen.</div>
 
   <div class="container">
@@ -171,7 +167,7 @@
     </div>
   </div>
 
-  <!-- Schloss Icon -->
+  <!-- Schloss Bild -->
   <img
     src="https://cdn-icons-png.flaticon.com/512/61/61457.png"
     alt="Schloss"
@@ -183,7 +179,7 @@
     tabindex="0"
   />
 
-  <!-- Firebase + Script -->
+  <!-- Firebase + Logik -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -210,7 +206,9 @@
     db.ref('konferenz').on('value', snap => {
       const data = snap.val();
       clearInterval(timerInterval);
-      document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('button').forEach(btn =>
+        btn.classList.remove('active')
+      );
 
       if (data && data.klasse && data.startzeit) {
         const start = new Date(data.startzeit);
@@ -240,7 +238,7 @@
         klasse: className,
         startzeit: new Date().toISOString()
       });
-      toggleLock(false); // sperren nach Auswahl
+      toggleLock(false);
     }
 
     function toggleLock(force = null) {
@@ -250,7 +248,6 @@
       } else {
         unlocked = !unlocked;
       }
-
       icon.classList.toggle('unlocked', unlocked);
     }
 
