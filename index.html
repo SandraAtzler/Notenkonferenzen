@@ -16,38 +16,42 @@
       user-select: none;
       cursor: default;
     }
+
+    .status-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
     .logo {
-      position: absolute;
-      left: 540px;
-      top: 90px;
       height: 60px;
-      z-index: 10;
+      flex-shrink: 0;
+      user-select: none;
     }
-    @media (max-width: 1200px) {
-      .logo {
-        left: 40px;
-        top: 40px;
-      }
-    }
-    @media (max-width: 600px) {
-      .logo {
-        position: static;
-        display: block;
-        margin: 0 auto 20px;
-      }
-    }
+
     .status {
       font-size: 18px;
       font-weight: bold;
-      margin-bottom: 30px;
-      text-align: center;
       user-select: none;
+      text-align: center;
     }
+
+    @media (max-width: 600px) {
+      .status-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+
     .container {
       max-width: 1000px;
       margin: 0 auto;
       padding: 0 20px 0 395px;
     }
+
     @media (max-width: 1200px) {
       .container {
         max-width: 1000px;
@@ -55,6 +59,7 @@
         padding: 0 20px 0 252px;
       }
     }
+
     @media (max-width: 600px) {
       .container {
         max-width: 800px;
@@ -62,6 +67,7 @@
         padding: 0 20px 0 20px;
       }
     }
+
     .class-row {
       margin-bottom: 15px;
       display: flex;
@@ -69,6 +75,7 @@
       gap: 10px;
       flex-wrap: wrap;
     }
+
     .class-label {
       font-weight: bold;
       font-size: 18px;
@@ -76,6 +83,7 @@
       margin-right: 10px;
       min-width: 100px;
     }
+
     button {
       background-color: darkred;
       color: white;
@@ -88,17 +96,21 @@
       transition: background-color 0.3s;
       user-select: none;
     }
+
     button:focus {
       outline: 2px solid #ff9999;
       outline-offset: 2px;
     }
+
     button.active {
       background-color: #e74c3c;
     }
+
     button:disabled {
       background-color: #440000;
       cursor: not-allowed;
     }
+
     .lock {
       position: fixed;
       bottom: 20px;
@@ -110,6 +122,7 @@
       transition: filter 0.3s;
       user-select: none;
     }
+
     .lock.unlocked {
       filter: brightness(60%) saturate(10%) invert(60%) sepia(20%) saturate(400%) hue-rotate(0deg) brightness(70%) contrast(85%);
       opacity: 0.7;
@@ -117,9 +130,12 @@
   </style>
 </head>
 <body>
-  <img src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png" alt="Schullogo" class="logo" />
   <h1 id="pageTitle" tabindex="0" aria-label="Notenkonferenzen Überschrift">Übersicht über die Notenkonferenzen</h1>
-  <div class="status">Die Konferenzen haben noch nicht begonnen.</div>
+
+  <div class="status-container">
+    <img src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png" alt="Schullogo" class="logo" />
+    <div class="status">Die Konferenzen haben noch nicht begonnen.</div>
+  </div>
 
   <div class="container">
     <div class="class-row">
@@ -171,7 +187,6 @@
     </div>
   </div>
 
-  <!-- Schloss Bild -->
   <img
     src="https://cdn-icons-png.flaticon.com/512/61/61457.png"
     alt="Schloss"
