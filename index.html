@@ -44,49 +44,46 @@
       user-select: none;
     }
     .container {
-      margin-left: 540px;
       max-width: 900px;
-    }
-    @media (max-width: 1024px) {
-      .container {
-        margin-left: 80px;
-        max-width: 600px;
-      }
-    }
-    @media (max-width: 600px) {
-      .container {
-        margin-left: 0;
-        max-width: 100%;
-        padding: 0 10px;
-      }
+      margin: 0 auto;
     }
     .class-row {
-      margin-bottom: 30px;
       display: flex;
-      flex-direction: column; /* Buttons untereinander */
-      align-items: center;    /* horizontal zentriert */
+      align-items: flex-start;
+      margin-bottom: 40px;
     }
     .class-label {
       font-weight: bold;
       font-size: 18px;
       color: #330000;
       user-select: none;
-      margin-bottom: 10px; /* Abstand zwischen Label und Buttons */
-      /* min-width entfernt, damit Label nicht unnötig breit ist */
+      min-width: 120px; /* Platz für die Klassenbezeichnung */
+      margin-right: 30px;
     }
-    .class-row button {
+    .buttons-wrapper {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 100px;
+      gap: 12px 20px; /* Abstand zwischen Spalten und Reihen */
+      justify-content: center; /* Zentriert alle Spalten horizontal */
+    }
+    .buttons-column {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    button {
       background-color: darkred;
       color: white;
       border: none;
-      padding: 10px 18px;
+      padding: 10px;
       border-radius: 5px;
       cursor: pointer;
-      min-width: 70px;
       font-size: 16px;
-      transition: background-color 0.3s;
       user-select: none;
-      margin: 6px 0; /* Abstand zwischen Buttons vertikal */
-      width: 100px; /* etwas einheitlichere Breite */
+      min-width: 70px;
+      width: 100%;
+      transition: background-color 0.3s;
     }
     button:focus {
       outline: 2px solid #ff9999;
@@ -123,51 +120,48 @@
   <div class="status">Die Konferenzen haben noch nicht begonnen.</div>
   <div class="container">
     <div class="class-row">
-      <div class="class-label">5. Klassen</div>
-      <button ondblclick="selectClass('5a')">5a</button>
-      <button ondblclick="selectClass('5b')">5b</button>
-      <button ondblclick="selectClass('5c')">5c</button>
-      <button ondblclick="selectClass('5d')">5d</button>
-      <button ondblclick="selectClass('5e')">5e</button>
-    </div>
-    <div class="class-row">
-      <div class="class-label">6. Klassen</div>
-      <button ondblclick="selectClass('6a')">6a</button>
-      <button ondblclick="selectClass('6b')">6b</button>
-      <button ondblclick="selectClass('6c')">6c</button>
-      <button ondblclick="selectClass('6d')">6d</button>
-      <button ondblclick="selectClass('6e')">6e</button>
-    </div>
-    <div class="class-row">
-      <div class="class-label">7. Klassen</div>
-      <button ondblclick="selectClass('7a')">7a</button>
-      <button ondblclick="selectClass('7b')">7b</button>
-      <button ondblclick="selectClass('7c')">7c</button>
-      <button ondblclick="selectClass('7d')">7d</button>
-      <button ondblclick="selectClass('7e')">7e</button>
-    </div>
-    <div class="class-row">
-      <div class="class-label">8. Klassen</div>
-      <button ondblclick="selectClass('8a')">8a</button>
-      <button ondblclick="selectClass('8b')">8b</button>
-      <button ondblclick="selectClass('8c')">8c</button>
-      <button ondblclick="selectClass('8d')">8d</button>
-      <button ondblclick="selectClass('8e')">8e</button>
-    </div>
-    <div class="class-row">
-      <div class="class-label">9. Klassen</div>
-      <button ondblclick="selectClass('9a')">9a</button>
-      <button ondblclick="selectClass('9b')">9b</button>
-      <button ondblclick="selectClass('9c')">9c</button>
-      <button ondblclick="selectClass('9d')">9d</button>
-      <button ondblclick="selectClass('9e')">9e</button>
-    </div>
-    <div class="class-row">
-      <div class="class-label">10. Klassen</div>
-      <button ondblclick="selectClass('10a')">10a</button>
-      <button ondblclick="selectClass('10b')">10b</button>
-      <button ondblclick="selectClass('10c')">10c</button>
-      <button ondblclick="selectClass('10d')">10d</button>
+      <div class="class-label">Klassen</div>
+      <div class="buttons-wrapper">
+        <div class="buttons-column">
+          <button ondblclick="selectClass('5a')">5a</button>
+          <button ondblclick="selectClass('6a')">6a</button>
+          <button ondblclick="selectClass('7a')">7a</button>
+          <button ondblclick="selectClass('8a')">8a</button>
+          <button ondblclick="selectClass('9a')">9a</button>
+          <button ondblclick="selectClass('10a')">10a</button>
+        </div>
+        <div class="buttons-column">
+          <button ondblclick="selectClass('5b')">5b</button>
+          <button ondblclick="selectClass('6b')">6b</button>
+          <button ondblclick="selectClass('7b')">7b</button>
+          <button ondblclick="selectClass('8b')">8b</button>
+          <button ondblclick="selectClass('9b')">9b</button>
+          <button ondblclick="selectClass('10b')">10b</button>
+        </div>
+        <div class="buttons-column">
+          <button ondblclick="selectClass('5c')">5c</button>
+          <button ondblclick="selectClass('6c')">6c</button>
+          <button ondblclick="selectClass('7c')">7c</button>
+          <button ondblclick="selectClass('8c')">8c</button>
+          <button ondblclick="selectClass('9c')">9c</button>
+          <button ondblclick="selectClass('10c')">10c</button>
+        </div>
+        <div class="buttons-column">
+          <button ondblclick="selectClass('5d')">5d</button>
+          <button ondblclick="selectClass('6d')">6d</button>
+          <button ondblclick="selectClass('7d')">7d</button>
+          <button ondblclick="selectClass('8d')">8d</button>
+          <button ondblclick="selectClass('9d')">9d</button>
+          <button ondblclick="selectClass('10d')">10d</button>
+        </div>
+        <div class="buttons-column">
+          <button ondblclick="selectClass('5e')">5e</button>
+          <button ondblclick="selectClass('6e')">6e</button>
+          <button ondblclick="selectClass('7e')">7e</button>
+          <button ondblclick="selectClass('8e')">8e</button>
+          <button ondblclick="selectClass('9e')">9e</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -260,13 +254,4 @@
   }
 
   // Timer zurücksetzen, wenn Schloss entsperrt ist und man Doppelklick auf Überschrift macht
-  titleEl.ondblclick = () => {
-    if (!unlocked) return; // nur wenn entsperrt
-    // Konferenzdaten entfernen
-    db.ref('konferenz').remove();
-    // Sperre nach Reset
-    toggleLock(false);
-  };
-</script>
-</body>
-</html>
+  titleEl.
