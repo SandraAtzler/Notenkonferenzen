@@ -123,6 +123,13 @@
       filter: brightness(60%) saturate(10%) invert(60%) sepia(20%) saturate(400%) hue-rotate(0deg) brightness(70%) contrast(85%);
       opacity: 0.7;
     }
+
+    .gray-background {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+}
   </style>
 </head>
 <body>
@@ -133,31 +140,32 @@
     <div class="status">Die Konferenzen haben noch nicht begonnen.</div>
   </div>
 
-  <div class="container">
-    <div class="class-row">
-      <div class="class-label">5. Klassen</div>
-      <button ondblclick="selectClass('5a')">5a</button>
-      <button ondblclick="selectClass('5b')">5b</button>
-      <button ondblclick="selectClass('5c')">5c</button>
-      <button ondblclick="selectClass('5d')">5d</button>
-      <button ondblclick="selectClass('5e')">5e</button>
-    </div>
-    <div class="class-row">
-      <div class="class-label">6. Klassen</div>
-      <button ondblclick="selectClass('6a')">6a</button>
-      <button ondblclick="selectClass('6b')">6b</button>
-      <button ondblclick="selectClass('6c')">6c</button>
-      <button ondblclick="selectClass('6d')">6d</button>
-      <button ondblclick="selectClass('6e')">6e</button>
-    </div>
-    <div class="class-row">
-      <div class="class-label">7. Klassen</div>
-      <button ondblclick="selectClass('7a')">7a</button>
-      <button ondblclick="selectClass('7b')">7b</button>
-      <button ondblclick="selectClass('7c')">7c</button>
-      <button ondblclick="selectClass('7d')">7d</button>
-      <button ondblclick="selectClass('7e')">7e</button>
-    </div>
+  <div class="group gray-background">
+  <div class="class-row">
+    <div class="class-label">5. Klassen</div>
+    <button ondblclick="selectClass('5a')">5a</button>
+    <button ondblclick="selectClass('5b')">5b</button>
+    <button ondblclick="selectClass('5c')">5c</button>
+    <button ondblclick="selectClass('5d')">5d</button>
+    <button ondblclick="selectClass('5e')">5e</button>
+  </div>
+  <div class="class-row">
+    <div class="class-label">6. Klassen</div>
+    <button ondblclick="selectClass('6a')">6a</button>
+    <button ondblclick="selectClass('6b')">6b</button>
+    <button ondblclick="selectClass('6c')">6c</button>
+    <button ondblclick="selectClass('6d')">6d</button>
+    <button ondblclick="selectClass('6e')">6e</button>
+  </div>
+  <div class="class-row">
+    <div class="class-label">7. Klassen</div>
+    <button ondblclick="selectClass('7a')">7a</button>
+    <button ondblclick="selectClass('7b')">7b</button>
+    <button ondblclick="selectClass('7c')">7c</button>
+    <button ondblclick="selectClass('7d')">7d</button>
+    <button ondblclick="selectClass('7e')">7e</button>
+  </div>
+</div>
     <div class="class-row" style="margin-top: 35px;">
       <div class="class-label">8. Klassen</div>
       <button ondblclick="selectClass('8a')">8a</button>
