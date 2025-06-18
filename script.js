@@ -1,62 +1,72 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyCIOeOJnqY3yHjbl6Ho14PYO6lpcOZtjfA",
+  authDomain: "notenkonferenzen.firebaseapp.com",
+  projectId: "notenkonferenzen",
+  storageBucket: "notenkonferenzen.appspot.com",
+  messagingSenderId: "471386308742",
+  appId: "1:471386308742:web:73c3409b42e1db2d599107",
+  databaseURL: "https://notenkonferenzen-default-rtdb.europe-west1.firebasedatabase.app/"
+};
 
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const statusEl = document.querySelector('.status');
+const titleEl = document.getElementById('pageTitle');
+let timerInterval;
 let unlocked = false;
-let activeButton = null;
-let startTime = null;
-let timerInterval = null;
+let currentClass = null;
 
-const status = document.getElementById("status");
-const lock = document.getElementById("lock");
-const buttons = document.querySelectorAll(".class-button");
+db.ref('konferenz').on('value', snap => {
+  const data = snap.val();
+  clearInterval(timerInterval);
+  document.querySelectorAll('button').forEach(btn =>
+    btn.classList.remove('active')
+  );
 
-function formatTime(ms) {
-  const s = Math.floor(ms / 1000);
-  const m = Math.floor(s / 60);
-  const sec = s % 60;
-  return `${m} min ${sec} sek`;
-}
+  if (data && data.klasse && data.startzeit) {
+    const start = new Date(data.startzeit);
+    currentClass = data.klasse;
 
-function updateTimer() {
-  const now = Date.now();
-  const diff = now - startTime;
-  const formatted = formatTime(diff);
-  status.innerHTML = `Aktive Klasse: <strong>${activeButton.textContent}</strong> – seit <span id="timer">${formatted}</span>`;
-}
+    const activeBtn = [...document.querySelectorAll('button')].find(
+      btn => btn.textContent === currentClass
+    );
+    if (activeBtn) activeBtn.classList.add('active');
 
-function resetButtons() {
-  buttons.forEach((btn) => btn.classList.remove("active"));
-}
-function unlock() {
-  unlocked = true;
-  const lockIcon = document.getElementById('lockIcon');
-  lockIcon.src = "https://iconduck.com/icons/22132/lock-open-512.png"; // echtes geöffnetes Schloss
-  lockIcon.style.opacity = 0.3;
-}
+    timerInterval = setInterval(() => {
+      const diff = Math.floor((Date.now() - start) / 1000);
+      const min = Math.floor(diff / 60), sec = diff % 60;
+      statusEl.textContent =
+        `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
+    }, 1000);
+  } else {
+    statusEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
+    currentClass = null;
+  }
+});
 
 function selectClass(className) {
   if (!unlocked) return;
-  // ...
-  unlocked = false;
-  const lockIcon = document.getElementById('lockIcon');
-  lockIcon.src = "https://cdn-icons-png.flaticon.com/512/3064/3064197.png"; // zurück auf geschlossenes Schloss
-  lockIcon.style.opacity = 1;
-}
-lock.addEventListener("dblclick", () => {
-  unlocked = !unlocked;
-  lock.style.opacity = unlocked ? 1 : 0.6;
-});
-
-buttons.forEach((btn) => {
-  btn.addEventListener("dblclick", () => {
-    if (!unlocked) return;
-
-    if (activeButton === btn) return; // Already active
-
-    resetButtons();
-    btn.classList.add("active");
-    activeButton = btn;
-    startTime = Date.now();
-    updateTimer();
-    clearInterval(timerInterval);
-    timerInterval = setInterval(updateTimer, 1000);
+  if (className === currentClass) return;
+  db.ref('konferenz').set({
+    klasse: className,
+    startzeit: new Date().toISOString()
   });
-});
+  toggleLock(false);
+}
+
+function toggleLock(force = null) {
+  const icon = document.getElementById('lockIcon');
+  if (force !== null) {
+    unlocked = force;
+  } else {
+    unlocked = !unlocked;
+  }
+  icon.classList.toggle('unlocked', unlocked);
+}
+
+titleEl.ondblclick = () => {
+  if (!unlocked) return;
+  db.ref('konferenz').remove();
+  toggleLock(false);
+};
