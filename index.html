@@ -97,7 +97,7 @@
     }
 
     button.active {
-      background-color: #ae4d4d;
+      background-color: #b96666;
     }
 
     button:disabled {
@@ -121,6 +121,23 @@
       filter: brightness(60%) saturate(10%) invert(60%) sepia(20%) saturate(400%) hue-rotate(0deg) brightness(70%) contrast(85%);
       opacity: 0.7;
     }
+
+    @media (max-width: 600px) {
+  button {
+    padding: 6px 10px;
+    font-size: 14px;
+    min-width: 50px;
+  }
+
+  .class-label {
+    font-size: 14px;
+  }
+
+  .group-label {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+}
   </style>
 </head>
 <body>
