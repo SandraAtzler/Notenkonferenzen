@@ -1,4 +1,4 @@
-const firebaseConfig = {
+const firebaseConfig = { 
   apiKey: "AIzaSyCIOeOJnqY3yHjbl6Ho14PYO6lpcOZtjfA",
   authDomain: "notenkonferenzen.firebaseapp.com",
   projectId: "notenkonferenzen",
