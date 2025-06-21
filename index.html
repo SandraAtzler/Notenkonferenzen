@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
@@ -7,15 +7,52 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1 id="pageTitle" tabindex="0" aria-label="Notenkonferenzen Überschrift">Übersicht über die Notenkonferenzen</h1>
-  
+  <h1 id="pageTitle" tabindex="0">Übersicht über die Notenkonferenzen</h1>
   <div class="logo-status-wrapper">
     <img src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png" alt="Schullogo" class="logo" />
-    <div class="status">Die Konferenzen haben noch nicht begonnen.</div>
+    <div class="start-box" id="startBox">Die Konferenz startet jetzt!</div>
+    <div class="status-text" id="statusText">Die Konferenzen haben noch nicht begonnen.</div>
   </div>
 
   <div class="container">
+    <!-- Gruppe: Montag -->
+    <div class="group-box">
+      <div class="group-header">Konferenzen am Montag (23.06.)</div>
+      <div class="group-content">
+        <div class="class-row">
+          <div class="class-label">10. Klassen</div>
+          <button ondblclick="selectClass('10a')">10a</button>
+          <button ondblclick="selectClass('10b')">10b</button>
+          <button ondblclick="selectClass('10c')">10c</button>
+          <button ondblclick="selectClass('10d')">10d</button>
+        </div>
+      </div>
+    </div>
 
+    <!-- Gruppe: Mittwoch -->
+    <div class="group-box">
+      <div class="group-header">Konferenzen am Mittwoch (25.06.)</div>
+      <div class="group-content">
+        <div class="class-row">
+          <div class="class-label">8. Klassen</div>
+          <button ondblclick="selectClass('8a')">8a</button>
+          <button ondblclick="selectClass('8b')">8b</button>
+          <button ondblclick="selectClass('8c')">8c</button>
+          <button ondblclick="selectClass('8d')">8d</button>
+          <button ondblclick="selectClass('8e')">8e</button>
+        </div>
+        <div class="class-row">
+          <div class="class-label">9. Klassen</div>
+          <button ondblclick="selectClass('9a')">9a</button>
+          <button ondblclick="selectClass('9b')">9b</button>
+          <button ondblclick="selectClass('9c')">9c</button>
+          <button ondblclick="selectClass('9d')">9d</button>
+          <button ondblclick="selectClass('9e')">9e</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gruppe: Donnerstag -->
     <div class="group-box">
       <div class="group-header">Konferenzen am Donnerstag (26.06)</div>
       <div class="group-content">
@@ -45,41 +82,6 @@
         </div>
       </div>
     </div>
-
-    <div class="group-box">
-      <div class="group-header">Konferenzen am Mittwoch (25.06.)</div>
-      <div class="group-content">
-        <div class="class-row">
-          <div class="class-label">8. Klassen</div>
-          <button ondblclick="selectClass('8a')">8a</button>
-          <button ondblclick="selectClass('8b')">8b</button>
-          <button ondblclick="selectClass('8c')">8c</button>
-          <button ondblclick="selectClass('8d')">8d</button>
-          <button ondblclick="selectClass('8e')">8e</button>
-        </div>
-        <div class="class-row">
-          <div class="class-label">9. Klassen</div>
-          <button ondblclick="selectClass('9a')">9a</button>
-          <button ondblclick="selectClass('9b')">9b</button>
-          <button ondblclick="selectClass('9c')">9c</button>
-          <button ondblclick="selectClass('9d')">9d</button>
-          <button ondblclick="selectClass('9e')">9e</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="group-box">
-      <div class="group-header">Konferenzen am Montag (23.06.)</div>
-      <div class="group-content">
-        <div class="class-row">
-          <div class="class-label">10. Klassen</div>
-          <button ondblclick="selectClass('10a')">10a</button>
-          <button ondblclick="selectClass('10b')">10b</button>
-          <button ondblclick="selectClass('10c')">10c</button>
-          <button ondblclick="selectClass('10d')">10d</button>
-        </div>
-      </div>
-    </div>
   </div>
 
   <img
@@ -88,11 +90,9 @@
     id="lockIcon"
     class="lock"
     ondblclick="toggleLock()"
-    aria-label="Schloss"
-    role="button"
-    tabindex="0"
   />
 
+  <!-- Firebase & Script -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="script.js"></script>
