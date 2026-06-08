@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Notenkonferenzen Übersicht</title>
-  <style>
-    body {
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notenkonferenzen Übersicht</title>
+
+<style>
+body {
       font-family: Arial, sans-serif;
       background-color: #fefefe;
       margin: 20px;
@@ -33,9 +34,28 @@
     .start-box {
       position: absolute;
       top: 50%;
+      left: calc(50% - 160px);
       transform: translateY(-50%);
       user-select: none;
+    }
+
+    #statusWrapper {
+      position: absolute;
+      top: 50%;
       left: calc(50% - 160px);
+      transform: translateY(-50%);
+    }
+
+    #statusWrapper .status-text {
+      position: static;
+      transform: none;
+    }
+
+    #ampel {
+      position: absolute;
+      top: 50%;
+      left: calc(50% + 230px);
+      transform: translateY(-50%);
     }
     .start-box {
       background-color: #8b0000;
@@ -96,7 +116,7 @@
       border: none;
       padding: 10px 18px;
       border-radius: 5px;
-      cursor: pointer;
+      cursor: default;
       min-width: 70px;
       font-size: 16px;
       transition: background-color 0.3s;
@@ -114,21 +134,50 @@
       position: relative;
       overflow: hidden;
     }
+    button.used.active {
+       background-color: #e07b7b;
+       overflow: visible;
+    }  
+    button.used.active::after {
+        display: none;
+    }  
     button.used::after {
       content: "";
       position: absolute;
-      top: 50%;
-      left: -25%;
-      width: 150%;
+      bottom: 0;
+      left: 0;
+      width: 200%;
       height: 2px;
       background-color: #cecece;
-      transform: rotate(-30deg);
+      transform-origin: left bottom;
+      transform: rotate(-27deg);
       pointer-events: none;
     }
-    button:disabled {
-      background-color: #440000;
-      cursor: not-allowed;
+
+    /* Tooltip via JS-gesetztem title-Attribut — nativ */
+    #btnTooltip {
+      position: fixed;
+      background: #333;
+      color: #fff;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 5px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 9999;
+      display: none;
+      transform: translateX(-50%);
     }
+    #btnTooltip::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: #333;
+    }
+    
     .lock {
       position: fixed;
       bottom: 20px;
@@ -144,25 +193,114 @@
     }
 
     .reset-box {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #e0e0e0;
-  color: #333;
-  padding: 10px 18px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-  display: none;
-  z-index: 9999;
-  user-select: none;
-}
+      position: fixed;
+      right: 20px;
+      background-color: #e0e0e0;
+      color: #333;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      display: none;
+      z-index: 9999;
+      user-select: none;
+    }
 
-.reset-box:hover {
-  background-color: #d0d0d0;
-} 
- 
+    .reset-box:hover {
+      background-color: #d0d0d0;
+    }
+
+    /* Zurücksetzen oben, Pause darunter mit Abstand */
+    #resetBox {
+      top: 20px;
+    }
+
+    #pauseBox {
+      top: 70px;
+    }
+
+    .start-announcement {
+      display: inline-block;
+      background-color: darkred;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    #ampelRot, #ampelGelb, #ampelGruen {
+      transition: fill 0.6s ease;
+    }
+
+    .highscore-wrapper {
+      margin: 30px auto 20px;
+      max-width: 600px;
+      display: none;
+      gap: 12px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .highscore-wrapper.visible {
+      display: flex;
+      flex-direction: row;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .hs-card {
+      flex: 1;
+      background: white;
+      border: 2px solid #eee;
+      border-radius: 8px;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .highscore-wrapper.visible .hs-card:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.05s; }
+    .highscore-wrapper.visible .hs-card:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
+    .highscore-wrapper.visible .hs-card:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.25s; }
+    .hs-header {
+      padding: 10px 12px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .hs-header-10 { background: #ccc; color: #222; }
+    .hs-header-89 { background: #ccc; color: #222; }
+    .hs-header-57 { background: #ccc; color: #222; }
+    .hs-avg {
+      font-size: 22px;
+      font-weight: bold;
+      text-align: center;
+      padding: 10px 0 2px;
+      color: #222;
+    }
+    .hs-avg-label {
+      font-size: 11px;
+      text-align: center;
+      color: #777;
+      margin-bottom: 10px;
+    }
+    .hs-footer {
+      border-top: 2px solid #eee;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .hs-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+    .hs-row-label { color: #777; display: flex; align-items: center; gap: 5px; }
+    .hs-row-label .short { display: none; }
+    .hs-row-value { font-weight: bold; color: #222; white-space: nowrap; }
+
+
     @media (max-width: 625px) {
       .class-label {
         display: none;
@@ -178,6 +316,7 @@
       justify-content: left;
       margin-bottom: 20px;
       gap: 20px;
+      padding-right: 10px;
     }
 
       .logo {
@@ -187,36 +326,120 @@
         transform: none;
       }
   
+  #statusWrapper {
+    position: static;
+    transform: none;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .zeit::before {
+    content: "\A";
+    white-space: pre;
+  }
+
   .status-text {
-    margin-left: 80px;
+    margin-left: 0;
     margin-top: 5px;
-    max-width: 70%;
+    flex: 1;
+    min-width: 0;
     white-space: normal;
     word-break: break-word;
+  }
+
+  #ampel {
+    position: static !important;
+    transform: none !important;
+    margin-top: 6px;
+    margin-left: auto;
+    flex-shrink: 0;
+    align-self: flex-start;
   }
 
   .start-box {
     display:none !important;
   }
-    }
-  </style>
-</head>  
+  
+  .highscore-wrapper.visible {
+    flex-direction: row;
+  }
+  .hs-avg { font-size: 16px; padding: 6px 0 2px; }
+  .hs-avg-label { font-size: 10px; margin-bottom: 6px; }
+  .hs-header { font-size: 11px; padding: 7px 4px; }
+  .hs-footer { padding: 6px 6px; gap: 3px; }
+  .hs-row { font-size: 10px; }
+  .hs-row-label .full { display: none; }
+  .hs-row-label .short { display: inline; }
+  }
+</style>
+</head>
 <body>
-  <div id="resetBox" class="reset-box" onclick="resetAll()">
-  Zurücksetzen
-</div>  
-  <h1 id="pageTitle" tabindex="0">Übersicht über die Notenkonferenzen</h1>
-  <div class="logo-status-wrapper">
-    <img src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png" alt="Schullogo" class="logo" />
-    <div class="start-box" id="startBox">Die Konferenz startet jetzt!</div>
-    <div class="status-text" id="statusText">Die Konferenzen haben noch nicht begonnen.</div>
+<div id="btnTooltip"></div>
+<div id="resetBox" class="reset-box" onclick="resetAll()">Zurücksetzen</div>
+<div id="pauseBox" class="reset-box" onclick="pauseKonferenz()">⏸ Pause</div>
+
+<h1 id="toggleHighscore">Übersicht über die Notenkonferenzen</h1>
+
+<div class="logo-status-wrapper">
+  <img src="https://info.marianumlan.de/nachmittagsanmeldung/assets/img/logo2.png" class="logo">
+  <div id="startBox" class="start-box"></div>
+  <div id="statusWrapper">
+    <div class="status-text">
+      <span id="statusText">Die Konferenzen haben noch nicht begonnen.</span>
+    </div>
   </div>
+  <svg id="ampel" width="24" height="62" viewBox="0 0 24 62" style="display:none;" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="24" height="62" rx="5" fill="#222"/>
+    <circle id="ampelRot"   cx="12" cy="11" r="8" fill="#555"/>
+    <circle id="ampelGelb"  cx="12" cy="31" r="8" fill="#555"/>
+    <circle id="ampelGruen" cx="12" cy="51" r="8" fill="#555"/>
+  </svg>
+</div>
 
 <div class="container">
-  
+  <!-- Klasse 10 -->
+   <div class="group-box">
+      <div class="group-header">Konferenzen am Dienstag (16.06.)</div>
+      <div class="group-content">
+        <div class="class-row">
+          <div class="class-label">10. Klassen</div>
+          <button ondblclick="selectClass('10a')">10a</button>
+          <button ondblclick="selectClass('10b')">10b</button>
+          <button ondblclick="selectClass('10c')">10c</button>
+          <button ondblclick="selectClass('10d')">10d</button>
+          <button ondblclick="selectClass('10e')">10e</button>
+        </div>
+      </div>
+    </div>
+   <!-- Klasse 8-9 -->
+    <div class="group-box">
+      <div class="group-header">Konferenzen am Mittwoch (17.06.)</div>
+      <div class="group-content">
+        <div class="class-row">
+          <div class="class-label">8. Klassen</div>
+          <button ondblclick="selectClass('8a')">8a</button>
+          <button ondblclick="selectClass('8b')">8b</button>
+          <button ondblclick="selectClass('8c')">8c</button>
+          <button ondblclick="selectClass('8d')">8d</button>
+          <button ondblclick="selectClass('8e')">8e</button>
+        </div>
+        <div class="class-row">
+          <div class="class-label">9. Klassen</div>
+          <button ondblclick="selectClass('9a')">9a</button>
+          <button ondblclick="selectClass('9b')">9b</button>
+          <button ondblclick="selectClass('9c')">9c</button>
+          <button ondblclick="selectClass('9d')">9d</button>
+          <button ondblclick="selectClass('9e')">9e</button>
+        </div>
+      </div>
+    </div>
   <!-- Klasse 5-7 -->
   <div class="group-box">
-      <div class="group-header">Konferenzen am Mittwoch (21.01.)</div>
+      <div class="group-header">Konferenzen am Donnerstag (18.06.)</div>
       <div class="group-content">
         <div class="class-row">
           <div class="class-label">5. Klassen</div>
@@ -243,203 +466,411 @@
           <button ondblclick="selectClass('7e')">7e</button>
         </div>
       </div>
-    </div>
-  
-  
-
-    <!-- Klasse 8-9 -->
-    <div class="group-box">
-      <div class="group-header">Konferenzen am Donnerstag (22.01.)</div>
-      <div class="group-content">
-        <div class="class-row">
-          <div class="class-label">8. Klassen</div>
-          <button ondblclick="selectClass('8a')">8a</button>
-          <button ondblclick="selectClass('8b')">8b</button>
-          <button ondblclick="selectClass('8c')">8c</button>
-          <button ondblclick="selectClass('8d')">8d</button>
-          <button ondblclick="selectClass('8e')">8e</button>
-        </div>
-        <div class="class-row">
-          <div class="class-label">9. Klassen</div>
-          <button ondblclick="selectClass('9a')">9a</button>
-          <button ondblclick="selectClass('9b')">9b</button>
-          <button ondblclick="selectClass('9c')">9c</button>
-          <button ondblclick="selectClass('9d')">9d</button>
-          <button ondblclick="selectClass('9e')">9e</button>
-        </div>
-      </div>
-    </div>
-
-  <!-- Klasse 10 -->
-   <div class="group-box">
-      <div class="group-header">Konferenzen am Freitag (23.01.)</div>
-      <div class="group-content">
-        <div class="class-row">
-          <div class="class-label">10. Klassen</div>
-          <button ondblclick="selectClass('10a')">10a</button>
-          <button ondblclick="selectClass('10b')">10b</button>
-          <button ondblclick="selectClass('10c')">10c</button>
-          <button ondblclick="selectClass('10d')">10d</button>
-          <button ondblclick="selectClass('10e')">10e</button>
-        </div>
-      </div>
     </div> 
+      <div id="highscoreBox" class="highscore-wrapper">
+        <div class="hs-card">
+          <div class="hs-header hs-header-10">Klassen 10</div>
+          <div class="hs-avg" id="hs-10-avg">–</div>
+          <div class="hs-avg-label">Ø Durchschnitt</div>
+          <div class="hs-footer">
+            <div class="hs-row"><span class="hs-row-label"><span class="full">Schnellste</span><span class="short">Min</span></span><span class="hs-row-value" id="hs-10-short">–</span></div>
+            <div class="hs-row"><span class="hs-row-label"><span class="full">Ausführlichste</span><span class="short">Max</span></span><span class="hs-row-value" id="hs-10-long">–</span></div>
+          </div>
+        </div>
+        <div class="hs-card">
+          <div class="hs-header hs-header-89">Klassen 8 &amp; 9</div>
+          <div class="hs-avg" id="hs-89-avg">–</div>
+          <div class="hs-avg-label">Ø Durchschnitt</div>
+          <div class="hs-footer">
+            <div class="hs-row"><span class="hs-row-label"><span class="full">Schnellste</span><span class="short">Min</span></span><span class="hs-row-value" id="hs-89-short">–</span></div>
+            <div class="hs-row"><span class="hs-row-label"><span class="full">Ausführlichste</span><span class="short">Max</span></span><span class="hs-row-value" id="hs-89-long">–</span></div>
+          </div>
+        </div>
+        <div class="hs-card">
+          <div class="hs-header hs-header-57">Klassen 5–7</div>
+          <div class="hs-avg" id="hs-57-avg">–</div>
+          <div class="hs-avg-label">Ø Durchschnitt</div>
+          <div class="hs-footer">
+            <div class="hs-row"><span class="hs-row-label"><span class="full">Schnellste</span><span class="short">Min</span></span><span class="hs-row-value" id="hs-57-short">–</span></div>
+            <div class="hs-row"><span class="hs-row-label"><span class="full">Ausführlichste</span><span class="short">Max</span></span><span class="hs-row-value" id="hs-57-long">–</span></div>
+          </div>
+        </div>
+      </div>
+</div>
 
-  </div>
-    
-    
+      
+
+      
+<img
+  src="https://cdn-icons-png.flaticon.com/512/61/61457.png"
+  id="lockIcon"
+  class="lock"
+  ondblclick="toggleLock()"
+/>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+/* =========================
+   Firebase Initialisierung
+========================= */
+firebase.initializeApp({
+  databaseURL: "https://notenkonferenzen-default-rtdb.europe-west1.firebasedatabase.app/"
+});
+
+const db = firebase.database();
+
+/* =========================
+   DOM Elemente
+========================= */
+const statusTextEl = document.getElementById("statusText");
+const startBoxEl   = document.getElementById("startBox");
+const lockIcon     = document.getElementById("lockIcon");
+const resetBox     = document.getElementById("resetBox");
+const pauseBox     = document.getElementById("pauseBox");
+const ampelEl      = document.getElementById("ampel");
+const ampelRot     = document.getElementById("ampelRot");
+const ampelGelb    = document.getElementById("ampelGelb");
+const ampelGruen   = document.getElementById("ampelGruen");
 
 
-  <img
-    src="https://cdn-icons-png.flaticon.com/512/61/61457.png"
-    alt="Schloss"
-    id="lockIcon"
-    class="lock"
-    ondblclick="toggleLock()"
-  />
-
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCIOeOJnqY3yHjbl6Ho14PYO6lpcOZtjfA",
-      authDomain: "notenkonferenzen.firebaseapp.com",
-      projectId: "notenkonferenzen",
-      storageBucket: "notenkonferenzen.appspot.com",
-      messagingSenderId: "471386308742",
-      appId: "1:471386308742:web:73c3409b42e1db2d599107",
-      databaseURL: "https://notenkonferenzen-default-rtdb.europe-west1.firebasedatabase.app/"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    const statusTextEl = document.getElementById('statusText');
-    const startBoxEl = document.getElementById('startBox');
-    const titleEl = document.getElementById('pageTitle');
-    const lockIcon = document.getElementById('lockIcon');
-    const resetBox = document.getElementById('resetBox');
-
-    let timerInterval;
-    let unlocked = false;
-    let currentClass = null;
-
-    db.ref().on('value', snap => {
-      const data = snap.val() || {};
-      const konferenz = data.konferenz || {};
-      const clicked = data.bereitsGeklickt || [];
-
-      clearInterval(timerInterval);
-      document.querySelectorAll('button').forEach(btn => {
-        const name = btn.textContent;
-        btn.classList.remove('active', 'used');
-        if (clicked.includes(name)) {
-          btn.classList.add('used');
-        }
-      });
-
-      if (konferenz.klasse && konferenz.startzeit) {
-        currentClass = konferenz.klasse;
-        const start = new Date(konferenz.startzeit);
-        const now = Date.now();
-        const startTime = start.getTime();
-        const diffSeconds = Math.floor((now - startTime) / 1000);
-
-        const activeBtn = [...document.querySelectorAll('button')].find(
-          b => b.textContent === currentClass
-        );
-        if (activeBtn) {
-          activeBtn.classList.add('active');
-          activeBtn.classList.remove('used');
-        }
-
-       if (diffSeconds < 10.9) {
-  if (window.innerWidth <= 600) {
-    // Kleine Bildschirme: Text normal anzeigen
-    startBoxEl.style.display = 'none';
-    statusTextEl.textContent = `Die Konferenz der ${currentClass} startet jetzt!`;
-  } else {
-    // Große Bildschirme: roten Kasten anzeigen
-    startBoxEl.style.display = 'inline-block';
-    startBoxEl.textContent = `Die Konferenz der ${currentClass} startet jetzt!`;
-    statusTextEl.textContent = '';
-  }
-
-  setTimeout(() => {
-    startTimer(start);
-  }, (10 - diffSeconds) * 1000);
-} else {
-          startTimer(start);
-        }
-      } else {
-        startBoxEl.style.display = 'none';
-        statusTextEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
-        currentClass = null;
-      }
-    });
-
-    function startTimer(start) {
-      clearInterval(timerInterval);
-      startBoxEl.style.display = 'none';
-      timerInterval = setInterval(() => {
-        const diff = Math.floor((Date.now() - start) / 1000);
-        const min = Math.floor(diff / 60),
-              sec = diff % 60;
-        statusTextEl.textContent =
-          `Aktuell in der Konferenz: ${currentClass} (${min} Min ${sec} Sek)`;
-      }, 1000);
-    }
-
-    function selectClass(className) {
-      if (!unlocked || className === currentClass) return;
-      db.ref().once('value').then(snap => {
-        const data = snap.val() || {};
-        const clicked = data.bereitsGeklickt || [];
-        if (!clicked.includes(className)) {
-          clicked.push(className);
-        }
-        db.ref().update({
-          konferenz: {
-            klasse: className,
-            startzeit: new Date().toISOString()
-          },
-          bereitsGeklickt: clicked
-        });
-        toggleLock(false);
-      });
-    }
-
-   function toggleLock() {
-  unlocked = !unlocked;
-  lockIcon.classList.toggle('unlocked', unlocked);
-
-  // Reset-Box ein-/ausblenden
-  resetBox.style.display = unlocked ? 'block' : 'none';
-}
-    function resetAll() {
-  if (!unlocked) return;
-
-  db.ref().set({
-    konferenz: null,
-    bereitsGeklickt: []
+/* =========================
+   Setzen der aktiven Klasse
+========================= */      
+function updateActiveButton(cls) {
+  document.querySelectorAll("button").forEach(btn => {
+    btn.classList.toggle(
+      "active",
+      btn.textContent.trim() === cls
+    );
   });
+}
+      
+/* =========================
+   Status Variablen
+========================= */
+let timerInterval = null;
+let unlocked = false;
+let currentClass = null;
 
-  // UI sofort zurücksetzen
-  startBoxEl.style.display = 'none';
-  statusTextEl.textContent = 'Die Konferenzen haben noch nicht begonnen.';
-  currentClass = null;
+/* =========================
+   Haupt Listener (Konferenz)
+========================= */
+db.ref("konferenz").on("value", snap => {
+  const konf = snap.val() || {};
 
   clearInterval(timerInterval);
 
-  resetBox.style.display = 'none';
+  if (konf.paused) {
+    statusTextEl.textContent = "⏸ Konferenz pausiert";
+    updateActiveButton(null);
+    currentClass = null;
+    return;
+  }
+
+  if (konf.klasse && konf.startzeit) {
+     if (currentClass !== konf.klasse) {
+        clearInterval(timerInterval);
+     }
+
+     currentClass = konf.klasse;
+     updateActiveButton(currentClass);
+     startTimer(new Date(konf.startzeit));
+ } else {
+    statusTextEl.textContent =
+      "Die Konferenzen haben noch nicht begonnen.";
+    updateActiveButton(null);
+    currentClass = null;
+    resetAmpel();
+  }
+});
+
+/* =========================
+   Ampel
+========================= */
+function updateAmpel(minutes) {
+  ampelEl.style.display = "block";
+  if (minutes < 10) {
+    ampelGruen.setAttribute("fill", "#00cc44");
+    ampelGelb.setAttribute("fill", "#555");
+    ampelRot.setAttribute("fill", "#555");
+  } else if (minutes < 15) {
+    ampelGruen.setAttribute("fill", "#555");
+    ampelGelb.setAttribute("fill", "#ffcc00");
+    ampelRot.setAttribute("fill", "#555");
+  } else {
+    ampelGruen.setAttribute("fill", "#555");
+    ampelGelb.setAttribute("fill", "#555");
+    ampelRot.setAttribute("fill", "#dd2222");
+  }
+}
+
+function resetAmpel() {
+  ampelEl.style.display = "none";
+  ampelGruen.setAttribute("fill", "#555");
+  ampelGelb.setAttribute("fill",  "#555");
+  ampelRot.setAttribute("fill",   "#555");
+}
+
+/* =========================
+   Timer Funktion
+========================= */
+function startTimer(start) {
+  timerInterval = setInterval(() => {
+    const diff = Math.floor((Date.now() - start.getTime()) / 1000);
+    const min  = Math.floor(diff / 60);
+    const sec  = diff % 60;
+
+    if (diff < 10) {
+      ampelEl.style.display = "none";
+      statusTextEl.innerHTML = `<span class="start-announcement">Die Konferenz der ${currentClass} startet jetzt!</span>`;
+    } else {
+      statusTextEl.innerHTML =
+        `Aktuell in der Konferenz: ${currentClass} <span class="zeit">(${min} min ${sec} s)</span>`;
+      updateAmpel(min);
+    }
+  }, 1000);
+}
+
+/* =========================
+   Klasse auswählen
+========================= */
+function selectClass(cls) {
+  if (!unlocked) return;
+
+  if (currentClass) {
+  const finishedClass = currentClass;
+
+  db.ref("konferenz").once("value").then(snap => {
+    const konf = snap.val();
+    if (!konf?.startzeit) return;
+
+    const start = new Date(konf.startzeit).getTime();
+    const dauer = Math.floor((Date.now() - start) / 1000);
+
+    db.ref("historie/" + finishedClass).set({
+      dauer: dauer
+    });
+  });
+}
+
+  const neueStartzeit = new Date().toISOString();
+
+ db.ref("konferenz").set({
+   klasse: cls,
+   startzeit: neueStartzeit,
+   paused: false
+ });
+
+  db.ref("bereitsGeklickt/" + cls).set(true);
+  toggleLock(false);
+
+}
+
+/* =========================
+   Bereits geklickte Klassen
+========================= */
+db.ref("bereitsGeklickt").on("value", snap => {
+  const used = snap.val() || {};
+
+  document.querySelectorAll("button").forEach(btn => {
+    const cls = btn.textContent.trim();
+
+    if (used[cls]) {
+      btn.classList.add("used");
+      btn.dataset.used = "true";
+    } else {
+      // Wird beim Reset wichtig: used-Klasse entfernen wenn nicht mehr in Firebase
+      btn.classList.remove("used");
+      btn.dataset.used = "false";
+    }
+  });
+});
+
+/* =========================
+   Lock / Unlock
+========================= */
+function toggleLock(force = null) {
+  unlocked = force !== null ? force : !unlocked;
+
+  lockIcon.classList.toggle("unlocked", unlocked);
+  resetBox.style.display = unlocked ? "block" : "none";
+  pauseBox.style.display = unlocked ? "block" : "none";
+
+  // Cursor auf Buttons anpassen
+  document.querySelectorAll("button").forEach(btn => {
+    btn.style.cursor = unlocked ? "pointer" : "default";
+  });
+}
+
+/* =========================
+   Reset
+========================= */
+function resetAll() {
+  if (!unlocked) return;
+
+  // Alles in Firebase löschen (konferenz, bereitsGeklickt, historie)
+  db.ref().set(null);
+
+  clearInterval(timerInterval);
+  currentClass = null;
+
+  // UI sofort zurücksetzen
+  statusTextEl.textContent = "Die Konferenzen haben noch nicht begonnen.";
+  updateActiveButton(null);
+  resetAmpel();
+
+  // Alle used-Markierungen sofort entfernen
+  document.querySelectorAll("button").forEach(btn => {
+    btn.classList.remove("used", "active");
+    btn.dataset.used = "false";
+  });
+
+  // Highscore zurücksetzen
+  ["10","89","57"].forEach(g => {
+    document.getElementById(`hs-${g}-short`).textContent = "–";
+    document.getElementById(`hs-${g}-long`).textContent  = "–";
+    document.getElementById(`hs-${g}-avg`).textContent   = "–";
+  });
+
+  // Highscore-Box ausblenden falls sichtbar
+  const highscoreBox = document.getElementById("highscoreBox");
+  highscoreBox.classList.remove("visible");
+  setTimeout(() => { highscoreBox.style.display = "none"; }, 300);
+  highscoreVisible = false;
+
   toggleLock(false);
 }
 
-    titleEl.ondblclick = () => {
-      if (!unlocked) return;
-      db.ref().set({});
-      toggleLock(false);
-    };
-  </script>
+/* =========================
+   Pause
+========================= */
+function pauseKonferenz() {
+  if (!unlocked || !currentClass) return;
+
+  db.ref("konferenz").once("value").then(snap => {
+    const konf = snap.val();
+    if (!konf?.startzeit) return;
+
+    const start = new Date(konf.startzeit).getTime();
+    const dauer = Math.floor((Date.now() - start) / 1000);
+
+    const finishedClass = currentClass;
+
+    db.ref("historie/" + finishedClass).set({
+       dauer: dauer
+    });
+
+    db.ref("konferenz").update({
+      paused: true
+    });
+
+    clearInterval(timerInterval);
+    statusTextEl.textContent = "⏸ Konferenz pausiert";
+    currentClass = null;
+    resetAmpel();
+  });
+}
+/* =========================
+   Highscore
+========================= */
+function formatMinutes(seconds) {
+  const minutes = Math.round(seconds / 60);
+  return `${minutes} min`;
+}
+
+const groups = {
+  "10": ["10a","10b","10c","10d","10e"],
+  "89": ["8a","8b","8c","8d","8e","9a","9b","9c","9d","9e"],
+  "57": ["5a","5b","5c","5d","5e","6a","6b","6c","6d","6e","7a","7b","7c","7d","7e"]
+};
+
+db.ref("historie").on("value", snap => {
+  const data = snap.val() || {};
+
+  // Tooltips auf Buttons setzen
+  document.querySelectorAll("button").forEach(btn => {
+    const cls = btn.textContent.trim();
+    if (data[cls]) {
+      const d = data[cls].dauer;
+      const min = Math.floor(d / 60);
+      const sec = d % 60;
+      btn.title = "";
+      btn.dataset.tooltip = `${min} min ${sec} s`;
+    } else {
+      btn.dataset.tooltip = "";
+    }
+  });
+
+  for (const groupKey in groups) {
+    const classes = groups[groupKey];
+    let shortest = null;
+    let longest  = null;
+    let total    = 0;
+    let count    = 0;
+
+    for (const cls of classes) {
+      if (!data[cls]) continue;
+      const d = data[cls].dauer;
+      if (d > 3600) continue; // vergessene Pause ausschließen
+      if (shortest === null || d < shortest.dauer) shortest = { klasse: cls, dauer: d };
+      if (longest  === null || d > longest.dauer)  longest  = { klasse: cls, dauer: d };
+      total += d;
+      count++;
+    }
+
+    document.getElementById(`hs-${groupKey}-short`).textContent =
+      shortest ? `${shortest.klasse}: ${formatMinutes(shortest.dauer)}` : "–";
+    document.getElementById(`hs-${groupKey}-long`).textContent =
+      longest  ? `${longest.klasse}: ${formatMinutes(longest.dauer)}`   : "–";
+    document.getElementById(`hs-${groupKey}-avg`).textContent =
+      count >= 2 ? formatMinutes(total / count) : "–";
+  }
+});
+      
+/* =========================
+   Button Tooltip
+========================= */
+const btnTooltip = document.getElementById("btnTooltip");
+
+document.addEventListener("mouseover", e => {
+  const btn = e.target.closest("button.used");
+  if (btn && btn.dataset.tooltip) {
+    btnTooltip.textContent = btn.dataset.tooltip;
+    const rect = btn.getBoundingClientRect();
+    btnTooltip.style.display = "block";
+    btnTooltip.style.left = (rect.left + rect.width / 2) + "px";
+    btnTooltip.style.top  = (rect.top - 36) + "px";
+  }
+});
+
+document.addEventListener("mouseout", e => {
+  if (e.target.closest("button.used")) {
+    btnTooltip.style.display = "none";
+  }
+});
+const headline = document.getElementById("toggleHighscore");
+const highscoreBox = document.getElementById("highscoreBox");
+
+let highscoreVisible = false;
+
+headline.addEventListener("click", () => {
+  highscoreVisible = !highscoreVisible;
+
+  if (highscoreVisible) {
+    highscoreBox.style.display = "flex";
+    requestAnimationFrame(() => {
+      highscoreBox.classList.add("visible");
+    });
+  } else {
+    highscoreBox.classList.remove("visible");
+    setTimeout(() => {
+      highscoreBox.style.display = "none";
+    }, 300);
+  }
+});   
+</script>
+
 </body>
 </html>
