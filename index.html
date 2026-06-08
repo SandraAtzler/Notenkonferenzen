@@ -298,7 +298,15 @@ body {
     }
     .hs-row-label { color: #777; display: flex; align-items: center; gap: 5px; }
     .hs-row-label .short { display: none; }
-    .hs-row-value { font-weight: bold; color: #222; white-space: nowrap; }
+    .hs-row-value {
+      font-weight: bold;
+      color: #222;
+      white-space: nowrap;
+      display: flex;
+      gap: 4px;
+    }
+    .hs-val-cls  { min-width: 28px; }
+    .hs-val-time { font-variant-numeric: tabular-nums; min-width: 40px; text-align: right; }
 
 
     @media (max-width: 625px) {
@@ -371,7 +379,9 @@ body {
   .hs-avg-label { font-size: 10px; margin-bottom: 6px; }
   .hs-header { font-size: 11px; padding: 7px 4px; }
   .hs-footer { padding: 6px 6px; gap: 3px; }
-  .hs-row { font-size: 10px; }
+  .hs-row { font-size: 10px; justify-content: space-between; }
+  .hs-val-cls { min-width: 22px; }
+  .hs-val-time { min-width: 30px; }
   .hs-row-label .full { display: none; }
   .hs-row-label .short { display: inline; }
   }
@@ -403,7 +413,7 @@ body {
 <div class="container">
   <!-- Klasse 10 -->
    <div class="group-box">
-      <div class="group-header">Konferenzen am Dienstag (16.06.)</div>
+      <div class="group-header">Konferenzen am Montag (15.06.)</div>
       <div class="group-content">
         <div class="class-row">
           <div class="class-label">10. Klassen</div>
@@ -820,10 +830,10 @@ db.ref("historie").on("value", snap => {
       count++;
     }
 
-    document.getElementById(`hs-${groupKey}-short`).textContent =
-      shortest ? `${shortest.klasse}: ${formatMinutes(shortest.dauer)}` : "–";
-    document.getElementById(`hs-${groupKey}-long`).textContent =
-      longest  ? `${longest.klasse}: ${formatMinutes(longest.dauer)}`   : "–";
+    document.getElementById(`hs-${groupKey}-short`).innerHTML =
+      shortest ? `<span class="hs-val-cls">${shortest.klasse}:</span><span class="hs-val-time">${formatMinutes(shortest.dauer)}</span>` : "–";
+    document.getElementById(`hs-${groupKey}-long`).innerHTML =
+      longest  ? `<span class="hs-val-cls">${longest.klasse}:</span><span class="hs-val-time">${formatMinutes(longest.dauer)}</span>`   : "–";
     document.getElementById(`hs-${groupKey}-avg`).textContent =
       count >= 2 ? formatMinutes(total / count) : "–";
   }
